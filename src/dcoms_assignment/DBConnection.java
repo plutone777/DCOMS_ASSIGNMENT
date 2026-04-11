@@ -5,8 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-    public static final String DB_URL = "DATABSE URL WILL BE HERE";
-    public static final String USER = "username";
+    public static final String DB_URL = "jdbc:derby://localhost:1527/DCOMS_ASSIGNMENT";
+    public static final String USER = "DCOMS";
     public static final String PASSWORD = "password";
 
     public static Connection getConnection() throws SQLException {

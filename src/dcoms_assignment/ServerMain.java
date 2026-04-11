@@ -8,6 +8,6 @@ import java.rmi.registry.Registry;
 public class ServerMain {
     public static void main(String[] args)throws RemoteException {
         Registry reg = LocateRegistry.createRegistry(1044);
-        reg.rebind("plsceholdername", new RMIObjectImplMain());
+        reg.rebind("HRMSService", new RMIObjectImplMain());
     }
 }
