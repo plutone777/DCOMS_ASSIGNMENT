@@ -4,10 +4,27 @@
  */
 package PersonalDetailsModule;
 
-/**
- *
- * @author bisma
- */
+import DB.DBConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
 public class PersonalDetailsModule {
-    
+   public boolean updatePersonalDetails(int employeeId, String address, String email, String phone) {
+    try (Connection conn = DB.DBConnection.getConnection()) {
+        String sql = "UPDATE EmployeePersonalDetails SET Address=?, Email=?, Phone=? WHERE EmployeeID=?";
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setString(1, address);
+        pst.setString(2, email);
+        pst.setString(3, phone);
+        pst.setInt(4, employeeId);
+
+        int rows = pst.executeUpdate();   // returns number of rows updated
+        return rows > 0;                  // true only if at least one row updated
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
 }
+
+}
+

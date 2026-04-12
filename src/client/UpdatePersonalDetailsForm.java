@@ -2,6 +2,7 @@ package client;
 
 import DB.DBConnection;
 import java.sql.Connection;
+import PersonalDetailsModule.PersonalDetailsModule;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -33,7 +34,7 @@ public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
         txtAddress = new javax.swing.JTextField();
         txtPhone = new javax.swing.JTextField();
         txtEmail = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -51,11 +52,10 @@ public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
         txtEmail.setText("Email");
         txtEmail.setName("txtEmail"); // NOI18N
 
-        jButton1.setText("Update");
-        jButton1.setName("Update"); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButton2.setText("jButton2");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButton2ActionPerformed(evt);
             }
         });
 
@@ -65,12 +65,13 @@ public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(151, 151, 151)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtPhone)
-                    .addComponent(txtEmail)
-                    .addComponent(txtAddress))
-                .addContainerGap(173, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(txtPhone, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
+                        .addComponent(txtEmail)
+                        .addComponent(txtAddress)))
+                .addContainerGap(170, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -81,9 +82,9 @@ public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
                 .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2)
+                .addContainerGap(73, Short.MAX_VALUE))
         );
 
         txtAddress.getAccessibleContext().setAccessibleName("txtAddress");
@@ -93,23 +94,41 @@ public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try (Connection conn = DBConnection.getConnection()) {
-        String sql = "UPDATE EmployeePersonalDetails SET Address=?, Email=?, PhoneNo=? WHERE EmployeeID=?";
-        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-        pst.setString(1, txtAddress.getText());
-        pst.setString(2, txtEmail.getText());
-        pst.setString(3, txtPhone.getText());
-        pst.setInt(4, 101); // Example EmployeeID, replace with logged-in user
-        pst.executeUpdate();
-        javax.swing.JOptionPane.showMessageDialog(this, "Personal details updated!");
-         } catch (Exception e) {
-        e.printStackTrace();
-        }    }//GEN-LAST:event_jButton1ActionPerformed
-
+    
     private void txtAddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAddressActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtAddressActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    PersonalDetailsModule personalModule = new PersonalDetailsModule();
+
+    new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                // Lookup the remote object from the registry
+                rmi.RMIInterfaceMain stub = (rmi.RMIInterfaceMain) java.rmi.Naming.lookup("rmi://localhost/RMIInterfaceMain");
+
+                // Call the remote method
+                boolean success = stub.updatePersonalDetails(
+                    101, // Example EmployeeID
+                    txtAddress.getText(),
+                    txtEmail.getText(),
+                    txtPhone.getText()
+                );
+
+                if (success) {
+                    javax.swing.JOptionPane.showMessageDialog(null, "Personal details updated via RMI!");
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(null, "Update failed.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                javax.swing.JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+            }
+        }
+    }).start();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -147,7 +166,7 @@ public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JTextField txtAddress;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtPhone;

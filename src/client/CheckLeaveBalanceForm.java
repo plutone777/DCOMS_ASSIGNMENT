@@ -2,6 +2,10 @@ package client;
 
 import DB.DBConnection;
 import java.sql.Connection;
+import javax.swing.table.DefaultTableModel;
+import LeaveBalanceModule.LeaveBalanceModule;
+
+
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -87,29 +91,30 @@ public class CheckLeaveBalanceForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try (Connection conn = DBConnection.getConnection()) {
-        String sql = "SELECT LeaveTypeName, TotalDays, UsedDays, RemainingDays " +
-                     "FROM LeaveBalance lb JOIN LeaveType lt ON lb.LeaveTypeID = lt.LeaveTypeID " +
-                     "WHERE lb.EmployeeID=? AND lb.Year=?";
-        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-        pst.setInt(1, 101); // Example EmployeeID
-        pst.setInt(2, 2026); // Current year
-        java.sql.ResultSet rs = pst.executeQuery();
 
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        new Thread(() -> {
+    try {
+        // Lookup the remote object from the registry
+        rmi.RMIInterfaceMain stub = (rmi.RMIInterfaceMain) java.rmi.Naming.lookup("rmi://localhost/RMIInterfaceMain");
 
-        model.setRowCount(0); // clear table
-        while (rs.next()) {
-            model.addRow(new Object[]{
-                rs.getString("LeaveTypeName"),
-                rs.getInt("TotalDays"),
-                rs.getInt("UsedDays"),
-                rs.getInt("RemainingDays")
-            });
+        // Call the remote method
+        boolean success = stub.checkLeaveBalance(
+            101, // Example EmployeeID
+            2026 // Example Year
+        );
+
+        if (success) {
+            javax.swing.JOptionPane.showMessageDialog(null, "Leave balance check successful via RMI!");
+            // You can also update your table model here if you want to show results
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(null, "No leave balance found.");
         }
     } catch (Exception e) {
         e.printStackTrace();
+        javax.swing.JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
     }
+}).start();
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

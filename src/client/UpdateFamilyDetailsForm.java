@@ -2,6 +2,7 @@ package client;
 
 import DB.DBConnection;
 import java.sql.Connection;
+import FamilyDetailsModule.FamilyDetailsModule;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -64,12 +65,13 @@ public class UpdateFamilyDetailsForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(155, 155, 155)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(txtEmergencyContact, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtChildren, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtSpouseName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtEmergencyContact, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtChildren, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSpouseName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jButton1)))
                 .addContainerGap(127, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -81,9 +83,9 @@ public class UpdateFamilyDetailsForm extends javax.swing.JFrame {
                 .addComponent(txtChildren, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtEmergencyContact, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
                 .addComponent(jButton1)
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addGap(66, 66, 66))
         );
 
         txtSpouseName.getAccessibleContext().setAccessibleName("txtSpouseName");
@@ -94,18 +96,37 @@ public class UpdateFamilyDetailsForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-         try (Connection conn = DBConnection.getConnection()) {
-        String sql = "UPDATE EmployeeFamilyDetails SET SpouseName=?, NumberOfChildren=?, EmergencyContact=? WHERE EmployeeID=?";
-        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-        pst.setString(1, txtSpouseName.getText());
-        pst.setInt(2, Integer.parseInt(txtChildren.getText())); // children is a number
-        pst.setInt(3, Integer.parseInt(txtEmergencyContact.getText())); // emergency contact number
-        pst.setInt(4, 101); // Example EmployeeID, replace with logged-in user
-        pst.executeUpdate();
-        javax.swing.JOptionPane.showMessageDialog(this, "Family details updated!");
-    } catch (Exception e) {
-        e.printStackTrace();
+
+        FamilyDetailsModule familyModule = new FamilyDetailsModule();
+
+             new Thread(new Runnable() {
+    @Override
+    public void run() {
+        try {
+            // Lookup the remote object from the registry
+             rmi.RMIInterfaceMain stub = (rmi.RMIInterfaceMain) java.rmi.Naming.lookup("rmi://localhost/RMIInterfaceMain");
+
+            // Call the remote method
+            boolean success = stub.updateFamilyDetails(
+                101, // Example EmployeeID
+                txtSpouseName.getText(),
+                Integer.parseInt(txtChildren.getText()),
+                Integer.parseInt(txtEmergencyContact.getText())
+            );
+
+            if (success) {
+                javax.swing.JOptionPane.showMessageDialog(null, "Family details updated via RMI!");
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(null, "Update failed.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+        }
     }
+}).start();
+
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtSpouseNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSpouseNameActionPerformed
