@@ -1,8 +1,6 @@
 package client;
 
-import DB.DBConnection;
-import java.sql.Connection;
-import PersonalDetailsModule.PersonalDetailsModule;
+import DB.PersonalDetailsModule;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -100,7 +98,7 @@ public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
     }//GEN-LAST:event_txtAddressActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    PersonalDetailsModule personalModule = new PersonalDetailsModule();
+    
 
     new Thread(new Runnable() {
         @Override

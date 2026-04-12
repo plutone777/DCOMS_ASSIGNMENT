@@ -6,15 +6,16 @@ package rmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import DB.LeaveBalanceData;
 
 public interface RMIInterfaceMain extends Remote {
     // Personal details
     boolean updatePersonalDetails(int employeeId, String address, String email, String phone) throws RemoteException;
-
+    
     // Family details
     boolean updateFamilyDetails(int employeeId, String spouseName, int children, int emergencyContact) throws RemoteException;
-
-    // Leave balance
-    boolean checkLeaveBalance(int employeeId, int leaveYear) throws RemoteException;
+    
+    // Leave balance - now returns actual data instead of just boolean
+    LeaveBalanceData checkLeaveBalance(int employeeId, int leaveYear) throws RemoteException;
 }
 

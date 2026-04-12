@@ -1,8 +1,6 @@
 package client;
 
-import DB.DBConnection;
-import java.sql.Connection;
-import FamilyDetailsModule.FamilyDetailsModule;
+import DB.FamilyDetailsModule;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -97,7 +95,6 @@ public class UpdateFamilyDetailsForm extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-        FamilyDetailsModule familyModule = new FamilyDetailsModule();
 
              new Thread(new Runnable() {
     @Override

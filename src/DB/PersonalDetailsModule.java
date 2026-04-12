@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package PersonalDetailsModule;
+package DB;
 
 import DB.DBConnection;
 import java.sql.Connection;
@@ -11,7 +11,7 @@ import java.sql.PreparedStatement;
 public class PersonalDetailsModule {
    public boolean updatePersonalDetails(int employeeId, String address, String email, String phone) {
     try (Connection conn = DB.DBConnection.getConnection()) {
-        String sql = "UPDATE EmployeePersonalDetails SET Address=?, Email=?, Phone=? WHERE EmployeeID=?";
+        String sql = "UPDATE APPUSER.EmployeePersonalDetails SET Address=?, Email=?, PhoneNo=? WHERE EmployeeID=?";
         PreparedStatement pst = conn.prepareStatement(sql);
         pst.setString(1, address);
         pst.setString(2, email);

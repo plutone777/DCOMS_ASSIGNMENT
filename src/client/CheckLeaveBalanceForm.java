@@ -1,10 +1,7 @@
 package client;
 
-import DB.DBConnection;
-import java.sql.Connection;
+import DB.LeaveBalanceData;
 import javax.swing.table.DefaultTableModel;
-import LeaveBalanceModule.LeaveBalanceModule;
-
 
 
 /*
@@ -93,28 +90,34 @@ public class CheckLeaveBalanceForm extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
         new Thread(() -> {
-    try {
-        // Lookup the remote object from the registry
-        rmi.RMIInterfaceMain stub = (rmi.RMIInterfaceMain) java.rmi.Naming.lookup("rmi://localhost/RMIInterfaceMain");
+        try {
+            rmi.RMIInterfaceMain stub = (rmi.RMIInterfaceMain) java.rmi.Naming.lookup("rmi://localhost/RMIInterfaceMain");
 
-        // Call the remote method
-        boolean success = stub.checkLeaveBalance(
-            101, // Example EmployeeID
-            2026 // Example Year
-        );
+            LeaveBalanceData data = stub.checkLeaveBalance(101, 2026);
 
-        if (success) {
-            javax.swing.JOptionPane.showMessageDialog(null, "Leave balance check successful via RMI!");
-            // You can also update your table model here if you want to show results
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(null, "No leave balance found.");
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+                model.setRowCount(0);
+                model.setColumnIdentifiers(new String[]{"Total Days", "Used Days", "Remaining Days"});
+
+                if (data != null) {
+                    model.addRow(new Object[]{
+                        data.getTotalDays(),
+                        data.getUsedDays(),
+                        data.getRemainingDays()
+                    });
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(null, "No leave balance found.");
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                javax.swing.JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+            });
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        javax.swing.JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
-    }
-}).start();
-
+    }).start();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

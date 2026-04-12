@@ -2,9 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package FamilyDetailsModule;
+package DB;
 
-import DB.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
@@ -17,8 +16,8 @@ public class FamilyDetailsModule {
             pst.setInt(2, children);
             pst.setInt(3, emergencyContact);
             pst.setInt(4, employeeId);
-            pst.executeUpdate();
-            return true;
+            int rows = pst.executeUpdate();
+            return rows > 0; // true only if at least one row was actually updated
         } catch (Exception e) {
             e.printStackTrace();
             return false;
