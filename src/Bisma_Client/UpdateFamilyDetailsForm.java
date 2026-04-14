@@ -1,6 +1,6 @@
-package client;
+package Bisma_Client;
 
-import DB.FamilyDetailsModule;
+import Bisma_DB.FamilyDetailsModule;
 import RMI.RMIInterfaceMain;
 
 /*

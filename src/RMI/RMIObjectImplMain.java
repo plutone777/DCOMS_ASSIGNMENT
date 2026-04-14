@@ -1,9 +1,9 @@
 package RMI;
 
-import DB.FamilyDetailsModule;
-import DB.LeaveBalanceData;
-import DB.LeaveBalanceModule;
-import DB.PersonalDetailsModule;
+import Bisma_DB.FamilyDetailsModule;
+import Bisma_DB.LeaveBalanceData;
+import Bisma_DB.LeaveBalanceModule;
+import Bisma_DB.PersonalDetailsModule;
 import Mayan.Employee;
 import Mayan.HR_DataAccess;
 import Mayan.HR_Report;

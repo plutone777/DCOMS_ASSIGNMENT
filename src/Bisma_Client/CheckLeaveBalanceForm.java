@@ -1,6 +1,6 @@
-package client;
+package Bisma_Client;
 
-import DB.LeaveBalanceData;
+import Bisma_DB.LeaveBalanceData;
 import RMI.RMIInterfaceMain;
 import javax.swing.table.DefaultTableModel;
 

@@ -1,6 +1,6 @@
 package RMI;
 
-import DB.LeaveBalanceData;
+import Bisma_DB.LeaveBalanceData;
 import Mayan.Employee;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
