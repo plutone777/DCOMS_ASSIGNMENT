@@ -1,6 +1,7 @@
 package client;
 
 import DB.LeaveBalanceData;
+import RMI.RMIInterfaceMain;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -91,7 +92,7 @@ public class CheckLeaveBalanceForm extends javax.swing.JFrame {
 
         new Thread(() -> {
         try {
-            rmi.RMIInterfaceMain stub = (rmi.RMIInterfaceMain) java.rmi.Naming.lookup("rmi://localhost/RMIInterfaceMain");
+            RMIInterfaceMain stub = (RMIInterfaceMain) java.rmi.Naming.lookup("rmi://localhost/RMIInterfaceMain");
 
             LeaveBalanceData data = stub.checkLeaveBalance(101, 2026);
 

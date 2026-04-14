@@ -1,6 +1,7 @@
 package client;
 
 import DB.PersonalDetailsModule;
+import RMI.RMIInterfaceMain;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -105,7 +106,7 @@ public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
         public void run() {
             try {
                 // Lookup the remote object from the registry
-                rmi.RMIInterfaceMain stub = (rmi.RMIInterfaceMain) java.rmi.Naming.lookup("rmi://localhost/RMIInterfaceMain");
+                RMIInterfaceMain stub = (RMIInterfaceMain) java.rmi.Naming.lookup("rmi://localhost/RMIInterfaceMain");
 
                 // Call the remote method
                 boolean success = stub.updatePersonalDetails(

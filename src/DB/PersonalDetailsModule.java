@@ -4,13 +4,13 @@
  */
 package DB;
 
-import DB.DBConnection;
+import RMI.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 public class PersonalDetailsModule {
    public boolean updatePersonalDetails(int employeeId, String address, String email, String phone) {
-    try (Connection conn = DB.DBConnection.getConnection()) {
+    try (Connection conn = DBConnection.getConnection()) {
         String sql = "UPDATE APPUSER.EmployeePersonalDetails SET Address=?, Email=?, PhoneNo=? WHERE EmployeeID=?";
         PreparedStatement pst = conn.prepareStatement(sql);
         pst.setString(1, address);
