@@ -8,11 +8,14 @@ import java.util.List;
 
 public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfaceMain{
     //create objects of your classes here
+     private static final long serialVersionUID = 1L;
+     HRModule hrModule = new HRModule();
+     
     public RMIObjectImplMain()throws RemoteException{
         super();
     }
     //override your methods here
-   private static final long serialVersionUID = 1L;
+  
 
     // ── INSTRUCTION 3: Create objects of your classes here ───────────
 
@@ -20,7 +23,7 @@ public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfa
 
     // Your HR object (Shorouq)
     // HRModule handles multithreading — it uses a thread pool internally
-    HRModule hrModule = new HRModule();
+    
 
 
     // ── INSTRUCTION 4: Override only the methods you are responsible for

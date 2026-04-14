@@ -54,8 +54,10 @@ public class HRForm extends javax.swing.JFrame {
         list4 = new java.awt.List();
         sidebarPanel = new javax.swing.JPanel();
         hrLabel = new javax.swing.JLabel();
-        sideApplyReviewBtn = new javax.swing.JButton();
+        LogOutBtn = new javax.swing.JButton();
         sideRegisterBtn = new javax.swing.JButton();
+        sideApplyReviewBtn = new javax.swing.JButton();
+        ReportGenerationBtn = new javax.swing.JButton();
         mainTabbedPane = new javax.swing.JTabbedPane();
         registerPanel = new javax.swing.JPanel();
         personalLabel = new javax.swing.JLabel();
@@ -105,6 +107,25 @@ public class HRForm extends javax.swing.JFrame {
         hrLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         sidebarPanel.add(hrLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 30, -1, -1));
 
+        LogOutBtn.setBackground(new java.awt.Color(0, 102, 102));
+        LogOutBtn.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        LogOutBtn.setForeground(new java.awt.Color(255, 255, 255));
+        LogOutBtn.setText("Log Out");
+        LogOutBtn.setToolTipText("");
+        LogOutBtn.setBorderPainted(false);
+        LogOutBtn.setFocusPainted(false);
+        LogOutBtn.addActionListener(this::LogOutBtnActionPerformed);
+        sidebarPanel.add(LogOutBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 310, 160, 30));
+
+        sideRegisterBtn.setBackground(new java.awt.Color(0, 102, 102));
+        sideRegisterBtn.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        sideRegisterBtn.setForeground(new java.awt.Color(255, 255, 255));
+        sideRegisterBtn.setText("Register Employee");
+        sideRegisterBtn.setBorderPainted(false);
+        sideRegisterBtn.setFocusPainted(false);
+        sideRegisterBtn.addActionListener(this::sideRegisterBtnActionPerformed);
+        sidebarPanel.add(sideRegisterBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 130, 155, 38));
+
         sideApplyReviewBtn.setBackground(new java.awt.Color(0, 102, 102));
         sideApplyReviewBtn.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         sideApplyReviewBtn.setForeground(new java.awt.Color(255, 255, 255));
@@ -115,14 +136,15 @@ public class HRForm extends javax.swing.JFrame {
         sideApplyReviewBtn.addActionListener(this::sideApplyReviewBtnActionPerformed);
         sidebarPanel.add(sideApplyReviewBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 178, 155, 38));
 
-        sideRegisterBtn.setBackground(new java.awt.Color(0, 102, 102));
-        sideRegisterBtn.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        sideRegisterBtn.setForeground(new java.awt.Color(255, 255, 255));
-        sideRegisterBtn.setText("Register Employee");
-        sideRegisterBtn.setBorderPainted(false);
-        sideRegisterBtn.setFocusPainted(false);
-        sideRegisterBtn.addActionListener(this::sideRegisterBtnActionPerformed);
-        sidebarPanel.add(sideRegisterBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 130, 155, 38));
+        ReportGenerationBtn.setBackground(new java.awt.Color(0, 102, 102));
+        ReportGenerationBtn.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        ReportGenerationBtn.setForeground(new java.awt.Color(255, 255, 255));
+        ReportGenerationBtn.setText("Report Generation");
+        ReportGenerationBtn.setToolTipText("");
+        ReportGenerationBtn.setBorderPainted(false);
+        ReportGenerationBtn.setFocusPainted(false);
+        ReportGenerationBtn.addActionListener(this::ReportGenerationBtnActionPerformed);
+        sidebarPanel.add(ReportGenerationBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 160, 30));
 
         registerPanel.setBackground(new java.awt.Color(15, 70, 70));
         registerPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -291,11 +313,11 @@ public class HRForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void sideApplyReviewBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sideApplyReviewBtnActionPerformed
+    private void LogOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogOutBtnActionPerformed
         // TODO add your handling code here:
             mainTabbedPane.setSelectedIndex(1);
             loadPendingLeaves();
-    }//GEN-LAST:event_sideApplyReviewBtnActionPerformed
+    }//GEN-LAST:event_LogOutBtnActionPerformed
 
     private void sideRegisterBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sideRegisterBtnActionPerformed
         // TODO add your handling code here:
@@ -332,6 +354,14 @@ public class HRForm extends javax.swing.JFrame {
     private void pendingListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pendingListActionPerformed
         onListClicked();
     }//GEN-LAST:event_pendingListActionPerformed
+
+    private void sideApplyReviewBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sideApplyReviewBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sideApplyReviewBtnActionPerformed
+
+    private void ReportGenerationBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReportGenerationBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ReportGenerationBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -536,6 +566,8 @@ private void connectToServer() {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton LogOutBtn;
+    private javax.swing.JButton ReportGenerationBtn;
     private javax.swing.JButton acceptButton;
     private javax.swing.JLabel accountLabel;
     private javax.swing.JTextField addressField;
