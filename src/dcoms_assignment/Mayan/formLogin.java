@@ -8,6 +8,7 @@ import dcoms_assignment.RMIInterfaceMain;
 import javax.swing.JOptionPane;
 import dcoms_assignment.Mayan.Employee;
 import dcoms_assignment.Mayan.UserSession;
+import dcoms_assignment.Navigator;
 
 /**
  *
@@ -123,15 +124,10 @@ public class formLogin extends javax.swing.JFrame {
                 Employee emp = remote.validateLogin(username, password);
                 if (emp != null) {
                     UserSession.setCurrentUser(emp);
-                    if (emp.getRole().equalsIgnoreCase("HR")) {
-                        JOptionPane.showMessageDialog(this,
-                                "Welcome HR " + emp.getFirstName());
-                        // open HR form here
-                    } else {
-                        JOptionPane.showMessageDialog(this,
-                                "Welcome Employee " + emp.getFirstName());
-                        // open Employee form here
-                    }
+                    UserSession.saveSession(emp);
+                    
+                    Navigator.openHome(emp, remote);
+
                     this.dispose();
                 } else {
                     JOptionPane.showMessageDialog(this,

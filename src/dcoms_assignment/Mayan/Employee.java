@@ -1,6 +1,7 @@
 package dcoms_assignment.Mayan;
 
-public class Employee implements java.io.Serializable{
+public class Employee implements java.io.Serializable {
+    private static final long serialVersionUID = 1L;
 
     private int employeeID;
     private String firstName;

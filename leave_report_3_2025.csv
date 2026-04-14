@@ -1,0 +1,9 @@
+Yearly Leave Report - 2025
+
+Employee ID: 3
+Employee Name: Mary Green
+
+LeaveApplicationID,StartDate,EndDate,NumberOfDays,Reason,ApplyDate,ApprovedBy,ApprovalDate
+13,2025-04-01,2025-04-03,3,"Medical leave",2026-04-14,Sam Ahmad,2026-04-14
+
+Total Applications: 1
