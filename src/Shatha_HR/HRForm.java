@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class HRForm extends javax.swing.JFrame {
     private RMIInterfaceMain hrService;
+    private int loggedInHrId = 1;
     private List<String[]> pendingLeaves;
     private int selectedLeaveId = -1;
     private int selectedEmpId   = -1;
@@ -315,9 +316,12 @@ public class HRForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void LogOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogOutBtnActionPerformed
-        // TODO add your handling code here:
-            mainTabbedPane.setSelectedIndex(1);
-            loadPendingLeaves();
+    int confirm = JOptionPane.showConfirmDialog(this,
+        "Are you sure you want to log out?",
+        "Log Out", JOptionPane.YES_NO_OPTION);
+    if (confirm == JOptionPane.YES_OPTION) {
+        this.dispose();
+    }
     }//GEN-LAST:event_LogOutBtnActionPerformed
 
     private void sideRegisterBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sideRegisterBtnActionPerformed
@@ -504,7 +508,7 @@ private void connectToServer() {
                 "Approve leave [ID: " + selectedLeaveId + "] ?",
                 "Confirm", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
         try {
-            boolean ok = hrService.reviewLeaveRequest(selectedLeaveId, "APPROVED", 1);
+            boolean ok = hrService.reviewLeaveRequest(selectedLeaveId, "APPROVED", loggedInHrId);
             JOptionPane.showMessageDialog(this,
                 ok ? "Leave APPROVED." : "Failed — insufficient balance.",
                 ok ? "Approved" : "Failed",
@@ -526,7 +530,7 @@ private void connectToServer() {
                 "Reject leave [ID: " + selectedLeaveId + "] ?",
                 "Confirm", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
         try {
-            boolean ok = hrService.reviewLeaveRequest(selectedLeaveId, "REJECTED", 1);
+            boolean ok = hrService.reviewLeaveRequest(selectedLeaveId, "REJECTED", loggedInHrId);
             JOptionPane.showMessageDialog(this,
                 ok ? "Leave REJECTED." : "Rejection failed.",
                 ok ? "Rejected" : "Failed",
@@ -565,6 +569,20 @@ private void connectToServer() {
         phoneNoField.setText("Phone no.");
         relationshipStatusPersonalField.setText("Relationship status");
     }
+   
+public HRForm(RMIInterfaceMain remoteStub, int hrEmployeeId) {
+    initComponents();
+    employeeTable.setDefaultEditor(Object.class, null);
+    this.hrService = remoteStub;       
+    this.loggedInHrId = hrEmployeeId; 
+    System.out.println("[HR] Connected via shared stub.");
+    pendingList.addItemListener(e -> {
+        if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+            onListClicked();
+        }
+    });
+    loadPendingLeaves();
+}
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton LogOutBtn;

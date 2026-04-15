@@ -111,7 +111,7 @@ public class HRDataAccess {
         // "pending", "PENDING", "Pending" all match
         String sql = "SELECT la.LeaveApplicationID, la.EmployeeID, "
                    + "       e.FirstName, e.LastName, "
-                   + "       la.LeaveType, la.StartDate, la.EndDate, "
+                   + "       la.StartDate, la.EndDate, "
                    + "       la.NumberOfDays, la.Reason "
                    + "FROM LeaveApplication la "
                    + "JOIN Employee e ON la.EmployeeID = e.EmployeeID "
@@ -127,7 +127,7 @@ public class HRDataAccess {
                     rs.getString("LeaveApplicationID"),
                     rs.getString("EmployeeID"),
                     rs.getString("FirstName") + " " + rs.getString("LastName"),
-                    rs.getString("LeaveType") != null ? rs.getString("LeaveType") : "N/A",
+                    "General",
                     rs.getString("StartDate"),
                     rs.getString("EndDate"),
                     rs.getString("NumberOfDays"),
@@ -202,7 +202,8 @@ public class HRDataAccess {
             }
 
             try (PreparedStatement ps = conn.prepareStatement(updateLeave)) {
-                ps.setString(1, decision);
+                String dbStatus = "APPROVED".equals(decision) ? "ACCEPTED" : decision;
+                ps.setString(1, dbStatus);
                 ps.setInt(2, hrEmployeeId);
                 ps.setInt(3, leaveApplicationId);
                 ps.executeUpdate();
@@ -216,7 +217,7 @@ public class HRDataAccess {
                     ps.setInt(4, numberOfDays);
                     int rows = ps.executeUpdate();
                     if (rows == 0) {
-                        // Not enough balance — rollback status
+                        // Not enough balance : rollback status
                         try (PreparedStatement rb = conn.prepareStatement(
                                 "UPDATE LeaveApplication "
                               + "SET Status='PENDING', ApprovedBy=NULL, ApprovalDate=NULL "

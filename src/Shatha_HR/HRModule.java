@@ -13,7 +13,7 @@ public class HRModule {
     // Thread pool: 5 threads available for concurrent HR operations
     private final ExecutorService threadPool = Executors.newFixedThreadPool(5);
 
-    // Data access object — all SQL lives in here
+    // Data access object : all SQL lives in here
     private final HRDataAccess dao = new HRDataAccess();
 
     // ─────────────────────────────────────────────────────────────────

@@ -29,6 +29,7 @@ public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfa
         super();
     }
     // shatha
+    private static final long serialVersionUID = 1L;
     HRModule hrModule = new HRModule();
     
     //override your methods here !!!!!!!!!!!!!!
@@ -98,7 +99,7 @@ public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfa
     @Override
     public List<String[]> getPendingLeaveRequests() throws RemoteException {
         try {
-            // HRModule returns List<LeaveRecord> — convert to List<String[]> for RMI
+            // HRModule returns List<LeaveRecord> : convert to List<String[]> for RMI
             // String[] is Serializable by default in Java
             List<Shatha_HR.LeaveRecord> records =
                 hrModule.getPendingLeaveRequests();
