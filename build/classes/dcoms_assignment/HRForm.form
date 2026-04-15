@@ -40,7 +40,7 @@
           <Group type="102" alignment="1" attributes="0">
               <Component id="sidebarPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="mainTabbedPane" pref="600" max="32767" attributes="0"/>
+              <Component id="mainTabbedPane" pref="610" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -50,7 +50,7 @@
           <Component id="sidebarPanel" alignment="1" max="32767" attributes="0"/>
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="mainTabbedPane" pref="502" max="32767" attributes="0"/>
+              <Component id="mainTabbedPane" pref="517" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
