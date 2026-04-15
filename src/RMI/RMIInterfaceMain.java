@@ -1,6 +1,6 @@
 package RMI;
 
-import DB.LeaveBalanceData;
+import Bisma_DB.LeaveBalanceData;
 import Mayan.Employee;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -21,4 +21,22 @@ public interface RMIInterfaceMain extends Remote{
     boolean updatePersonalDetails(int employeeId, String address, String email, String phone) throws RemoteException;
     boolean updateFamilyDetails(int employeeId, String spouseName, int children, int emergencyContact) throws RemoteException;
     LeaveBalanceData checkLeaveBalance(int employeeId, int leaveYear) throws RemoteException;
+    
+    // shatha's methods
+     int registerEmployee(
+            String firstName, String lastName, String icOrPassportNo,
+            String username, String passwordHash, String role,
+            String spouseName, int numberOfChildren,
+            String dependentName, String dependantRelationship, String dependentDOB,
+            String relationshipStatus,
+            String emergencyContact, String emergencyContactRelationship,
+            String dateOfBirth, String gender,
+            String address, String email, String phoneNo
+    ) throws RemoteException;
+    List<String[]> getPendingLeaveRequests() throws RemoteException;
+    String[] getEmployeeInfoById(int employeeId) throws RemoteException;
+    boolean reviewLeaveRequest(int leaveApplicationId, String decision,
+                               int hrEmployeeId) throws RemoteException;
+
+   
 }
