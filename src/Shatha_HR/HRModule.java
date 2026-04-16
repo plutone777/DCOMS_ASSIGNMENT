@@ -1,5 +1,7 @@
 package Shatha_HR;
 
+import RMI.DBConnection;
+import java.sql.Connection; 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -30,14 +32,19 @@ public class HRModule {
             String address, String email, String phoneNo
     ) throws Exception {
 
-        // Submit the DB operation as a Callable task to the thread pool
-        Callable<Integer> task = () -> dao.registerEmployee(
-            firstName, lastName, icOrPassportNo, username, passwordHash, role,
-            spouseName, numberOfChildren,
-            dependentName, dependantRelationship, dependentDOB, relationshipStatus,
-            emergencyContact, emergencyContactRelationship,
-            dateOfBirth, gender, address, email, phoneNo
-        );
+        // Get Connection from DBConnection and pass it to DAO
+        Callable<Integer> task = () -> {
+            try (Connection conn = DBConnection.getConnection()) {
+                return dao.registerEmployee(
+                    conn,  
+                    firstName, lastName, icOrPassportNo, username, passwordHash, role,
+                    spouseName, numberOfChildren,
+                    dependentName, dependantRelationship, dependentDOB, relationshipStatus,
+                    emergencyContact, emergencyContactRelationship,
+                    dateOfBirth, gender, address, email, phoneNo
+                );
+            }
+        };
 
         Future<Integer> future = threadPool.submit(task);
         return future.get(); // wait for result
@@ -46,8 +53,13 @@ public class HRModule {
     // ─────────────────────────────────────────────────────────────────
     //  GET PENDING LEAVE REQUESTS
     // ─────────────────────────────────────────────────────────────────
-    public List<LeaveRecord> getPendingLeaveRequests() throws Exception {
-        Callable<List<LeaveRecord>> task = () -> dao.getPendingLeaveRequests();
+public List<LeaveRecord> getPendingLeaveRequests() throws Exception {
+        // Get Connection and pass to DAO
+        Callable<List<LeaveRecord>> task = () -> {
+            try (Connection conn = DBConnection.getConnection()) {
+                return dao.getPendingLeaveRequests(conn);  
+            }
+        };
         Future<List<LeaveRecord>> future = threadPool.submit(task);
         return future.get();
     }
@@ -56,7 +68,12 @@ public class HRModule {
     //  GET EMPLOYEE INFO 
     // ─────────────────────────────────────────────────────────────────
     public String[] getEmployeeInfoById(int employeeId) throws Exception {
-        Callable<String[]> task = () -> dao.getEmployeeInfoById(employeeId);
+        //Get Connection and pass to DAO
+        Callable<String[]> task = () -> {
+            try (Connection conn = DBConnection.getConnection()) {
+                return dao.getEmployeeInfoById(conn, employeeId);
+            }
+        };
         Future<String[]> future = threadPool.submit(task);
         return future.get();
     }
@@ -66,13 +83,18 @@ public class HRModule {
     // ─────────────────────────────────────────────────────────────────
     public boolean reviewLeaveRequest(int leaveApplicationId, String decision,
                                       int hrEmployeeId) throws Exception {
-        Callable<Boolean> task = () -> dao.reviewLeaveRequest(
-            leaveApplicationId, decision, hrEmployeeId
-        );
+        //Get Connection and pass to DAO
+        Callable<Boolean> task = () -> {
+            try (Connection conn = DBConnection.getConnection()) {
+                return dao.reviewLeaveRequest(
+                    conn,  // ← ADD conn as first parameter
+                    leaveApplicationId, decision, hrEmployeeId
+                );
+            }
+        };
         Future<Boolean> future = threadPool.submit(task);
         return future.get();
     }
-
     // ─────────────────────────────────────────────────────────────────
     //  SHUTDOWN 
     // ─────────────────────────────────────────────────────────────────
