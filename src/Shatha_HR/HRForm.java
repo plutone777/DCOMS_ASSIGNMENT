@@ -400,15 +400,11 @@ public class HRForm extends javax.swing.JFrame {
                 getVal(emailField,                   "Email"),
                 getVal(phoneNoField,                 "Phone no.")
             );
-            if (newId == -1) {
-                JOptionPane.showMessageDialog(this, "FAILED. Username or IC already exists.",
-                    "Failed", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this,
-                    "Registered! ID: " + newId + "  Name: " + firstName + " " + lastName,
-                    "Success", JOptionPane.INFORMATION_MESSAGE);
-                clearForm();
-            }
+            JOptionPane.showMessageDialog(this,
+                "Successfully added! Employee ID: " + newId + "\nName: " + firstName + " " + lastName,
+                "Success", JOptionPane.INFORMATION_MESSAGE);
+            clearForm();
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Server error:\n" + e.getMessage(),
                 "Error", JOptionPane.ERROR_MESSAGE);
