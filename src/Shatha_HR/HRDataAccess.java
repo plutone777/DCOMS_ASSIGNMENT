@@ -25,9 +25,11 @@ public class HRDataAccess {
 
         // Derby: INSERT with GENERATED ALWAYS AS IDENTITY column
        
+        String sqlGetMax = "SELECT COALESCE(MAX(EmployeeID), 0) + 1 AS NextID FROM Employee";
+        
         String sql1 = "INSERT INTO Employee "
-                    + "(FirstName, LastName, ICOrPassportNo, Username, PasswordHash, Role) "
-                    + "VALUES (?, ?, ?, ?, ?, ?)";
+                    + "(EmployeeID, FirstName, LastName, ICOrPassportNo, Username, PasswordHash, Role) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         String sql2 = "INSERT INTO EmployeePersonalDetails "
                     + "(EmployeeID, DateOfBirth, Gender, Address, Email, PhoneNo) "
@@ -44,22 +46,24 @@ public class HRDataAccess {
                     + "(EmployeeID, CurrentYear, TotalDays, UsedDays, RemainingDays) "
                     + "VALUES (?, YEAR(CURRENT_DATE), 20, 0, 20)";
 
-try (PreparedStatement ps1 = conn.prepareStatement(
-                     sql1, Statement.RETURN_GENERATED_KEYS)) {
-
-            ps1.setString(1, firstName);
-            ps1.setString(2, lastName);
-            ps1.setString(3, icOrPassportNo);
-            ps1.setString(4, username);
-            ps1.setString(5, passwordHash);
-            ps1.setString(6, (role == null || role.isEmpty()) ? "EMPLOYEE" : role);
+// Step 1: Get the next available EmployeeID
+        int newEmpId;
+        try (PreparedStatement psMax = conn.prepareStatement(sqlGetMax);
+             ResultSet rsMax = psMax.executeQuery()) {
+            rsMax.next();
+            newEmpId = rsMax.getInt("NextID");
+        }
+        
+        // Step 2: Insert employee with manually generated ID
+        try (PreparedStatement ps1 = conn.prepareStatement(sql1)) {
+            ps1.setInt(1, newEmpId);                  
+            ps1.setString(2, firstName);
+            ps1.setString(3, lastName);
+            ps1.setString(4, icOrPassportNo);
+            ps1.setString(5, username);
+            ps1.setString(6, passwordHash);
+            ps1.setString(7, (role == null || role.isEmpty()) ? "EMPLOYEE" : role);
             ps1.executeUpdate();
-
-            // Read the auto-generated EmployeeID from Derby
-            int newEmpId = -1;
-            ResultSet keys = ps1.getGeneratedKeys();
-            if (keys.next()) newEmpId = keys.getInt(1);
-            if (newEmpId == -1) return -1;
 
             // Insert EmployeePersonalDetails
             try (PreparedStatement ps2 = conn.prepareStatement(sql2)) {
