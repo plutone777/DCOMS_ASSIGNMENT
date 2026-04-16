@@ -5,8 +5,9 @@
 package Shatha_HR;
 
 
+import Mayan.Employee;
+import Mayan.formHrReport;
 import RMI.RMIInterfaceMain;
-import java.rmi.Naming;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -20,28 +21,16 @@ import javax.swing.table.DefaultTableModel;
  */
 public class HRForm extends javax.swing.JFrame {
     private RMIInterfaceMain hrService;
+    private int loggedInHrId = 1;
     private List<String[]> pendingLeaves;
     private int selectedLeaveId = -1;
     private int selectedEmpId   = -1;
+    private Employee emp; // added by Mayan
     
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(HRForm.class.getName());
 
-    /**
-     * Creates new form HRForm
-     */
-    public HRForm() {
-        initComponents();
-        // Make table cells non-editable
-        employeeTable.setDefaultEditor(Object.class, null);
-        connectToServer();
-        pendingList.addItemListener(e -> {
-            if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-                onListClicked();
-            }
-        });
-        loadPendingLeaves();
-    }
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -315,9 +304,12 @@ public class HRForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void LogOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogOutBtnActionPerformed
-        // TODO add your handling code here:
-            mainTabbedPane.setSelectedIndex(1);
-            loadPendingLeaves();
+    int confirm = JOptionPane.showConfirmDialog(this,
+        "Are you sure you want to log out?",
+        "Log Out", JOptionPane.YES_NO_OPTION);
+    if (confirm == JOptionPane.YES_OPTION) {
+        this.dispose();
+    }
     }//GEN-LAST:event_LogOutBtnActionPerformed
 
     private void sideRegisterBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sideRegisterBtnActionPerformed
@@ -361,44 +353,19 @@ public class HRForm extends javax.swing.JFrame {
     }//GEN-LAST:event_sideApplyReviewBtnActionPerformed
 
     private void ReportGenerationBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReportGenerationBtnActionPerformed
-        // TODO add your handling code here:
+        new formHrReport(emp, hrService).setVisible(true);
     }//GEN-LAST:event_ReportGenerationBtnActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
+
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new HRForm().setVisible(true));
-    }
-private void connectToServer() {
-        try {
-            String url = "rmi://localhost:1044/HRMSService"; // matches ServerMain.rebind("HRMSService",...)
-            hrService = (RMIInterfaceMain) Naming.lookup(url);
-            System.out.println("[HR] Connected.");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                "Cannot connect!\nStart ServerMain first.\n\n" + e.getMessage(),
-                "Connection Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+    //    java.awt.EventQueue.invokeLater(() -> new HRForm().setVisible(true));
+   // }
+
 
     private void onRegisterClicked() {
         if (hrService == null) { JOptionPane.showMessageDialog(this, "Not connected!"); return; }
@@ -504,7 +471,7 @@ private void connectToServer() {
                 "Approve leave [ID: " + selectedLeaveId + "] ?",
                 "Confirm", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
         try {
-            boolean ok = hrService.reviewLeaveRequest(selectedLeaveId, "APPROVED", 1);
+            boolean ok = hrService.reviewLeaveRequest(selectedLeaveId, "APPROVED", loggedInHrId);
             JOptionPane.showMessageDialog(this,
                 ok ? "Leave APPROVED." : "Failed — insufficient balance.",
                 ok ? "Approved" : "Failed",
@@ -526,7 +493,7 @@ private void connectToServer() {
                 "Reject leave [ID: " + selectedLeaveId + "] ?",
                 "Confirm", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
         try {
-            boolean ok = hrService.reviewLeaveRequest(selectedLeaveId, "REJECTED", 1);
+            boolean ok = hrService.reviewLeaveRequest(selectedLeaveId, "REJECTED", loggedInHrId);
             JOptionPane.showMessageDialog(this,
                 ok ? "Leave REJECTED." : "Rejection failed.",
                 ok ? "Rejected" : "Failed",
@@ -565,6 +532,21 @@ private void connectToServer() {
         phoneNoField.setText("Phone no.");
         relationshipStatusPersonalField.setText("Relationship status");
     }
+   
+public HRForm(RMIInterfaceMain remoteStub, int hrEmployeeId, Employee emp) {
+    initComponents();
+    employeeTable.setDefaultEditor(Object.class, null);
+    this.hrService = remoteStub;       
+    this.loggedInHrId = hrEmployeeId; 
+    this.emp = emp; // added by Mayan
+    System.out.println("[HR] Connected via shared stub.");
+    pendingList.addItemListener(e -> {
+        if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+            onListClicked();
+        }
+    });
+    loadPendingLeaves();
+}
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton LogOutBtn;

@@ -2,8 +2,10 @@ package RMI;
 
 import Bisma_DB.LeaveBalanceData;
 import Mayan.Employee;
+import Samara.LeaveRequest;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.List;
 
 public interface RMIInterfaceMain extends Remote{
@@ -23,7 +25,7 @@ public interface RMIInterfaceMain extends Remote{
     LeaveBalanceData checkLeaveBalance(int employeeId, int leaveYear) throws RemoteException;
     
     // shatha's methods
-     int registerEmployee(
+    int registerEmployee(
             String firstName, String lastName, String icOrPassportNo,
             String username, String passwordHash, String role,
             String spouseName, int numberOfChildren,
@@ -37,6 +39,12 @@ public interface RMIInterfaceMain extends Remote{
     String[] getEmployeeInfoById(int employeeId) throws RemoteException;
     boolean reviewLeaveRequest(int leaveApplicationId, String decision,
                                int hrEmployeeId) throws RemoteException;
-
-   
+    
+    // samara's methods
+    public int applyLeave(String loggedInEmployeeId, Date startDate, Date endDate, String text)
+            throws RemoteException;
+    public String getLeaveStatus(int requestId, String loggedInEmployeeId)
+            throws RemoteException;
+    public List<LeaveRequest> getLeaveHistory(String loggedInEmployeeId)
+            throws RemoteException;
 }

@@ -1,6 +1,6 @@
 package Shatha_HR;
 
-import RMI.DBConnection;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,7 @@ public class HRDataAccess {
     //  HR FEATURE 1 : Insert employee into 4 tables
     // ─────────────────────────────────────────────────────────────────
     public int registerEmployee(
+            Connection conn,
             String firstName, String lastName, String icOrPassportNo,
             String username, String passwordHash, String role,
             String spouseName, int numberOfChildren,
@@ -43,8 +44,7 @@ public class HRDataAccess {
                     + "(EmployeeID, CurrentYear, TotalDays, UsedDays, RemainingDays) "
                     + "VALUES (?, YEAR(CURRENT_DATE), 20, 0, 20)";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps1 = conn.prepareStatement(
+try (PreparedStatement ps1 = conn.prepareStatement(
                      sql1, Statement.RETURN_GENERATED_KEYS)) {
 
             ps1.setString(1, firstName);
@@ -104,30 +104,29 @@ public class HRDataAccess {
     // ─────────────────────────────────────────────────────────────────
     //  HR FEATURE 2a : Load PENDING leave requests
     // ─────────────────────────────────────────────────────────────────
-    public List<LeaveRecord> getPendingLeaveRequests() throws SQLException {
+    public List<LeaveRecord> getPendingLeaveRequests(Connection conn) throws SQLException {
         List<LeaveRecord> results = new ArrayList<>();
 
         // UPPER() makes the comparison case-insensitive:
         // "pending", "PENDING", "Pending" all match
         String sql = "SELECT la.LeaveApplicationID, la.EmployeeID, "
                    + "       e.FirstName, e.LastName, "
-                   + "       la.LeaveType, la.StartDate, la.EndDate, "
+                   + "       la.StartDate, la.EndDate, "
                    + "       la.NumberOfDays, la.Reason "
                    + "FROM LeaveApplication la "
                    + "JOIN Employee e ON la.EmployeeID = e.EmployeeID "
                    + "WHERE UPPER(la.Status) = 'PENDING' "
                    + "ORDER BY la.ApplyDate ASC";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+       try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) { 
 
             while (rs.next()) {
                 results.add(new LeaveRecord(
                     rs.getString("LeaveApplicationID"),
                     rs.getString("EmployeeID"),
                     rs.getString("FirstName") + " " + rs.getString("LastName"),
-                    rs.getString("LeaveType") != null ? rs.getString("LeaveType") : "N/A",
+                    "General",
                     rs.getString("StartDate"),
                     rs.getString("EndDate"),
                     rs.getString("NumberOfDays"),
@@ -141,15 +140,14 @@ public class HRDataAccess {
     // ─────────────────────────────────────────────────────────────────
     //  HR FEATURE 2b : Get employee info for table row
     // ─────────────────────────────────────────────────────────────────
-    public String[] getEmployeeInfoById(int employeeId) throws SQLException {
+    public String[] getEmployeeInfoById(Connection conn, int employeeId) throws SQLException {
         String sql = "SELECT e.EmployeeID, e.FirstName, e.LastName, e.Username, "
                    + "       lb.RemainingDays, lb.CurrentYear "
                    + "FROM Employee e "
                    + "JOIN LeaveBalance lb ON e.EmployeeID = lb.EmployeeID "
                    + "WHERE e.EmployeeID = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {   
             ps.setInt(1, employeeId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -176,7 +174,7 @@ public class HRDataAccess {
     // ─────────────────────────────────────────────────────────────────
     //  HR FEATURE 2c : Accept or Reject a leave request
     // ─────────────────────────────────────────────────────────────────
-    public boolean reviewLeaveRequest(int leaveApplicationId, String decision,
+    public boolean reviewLeaveRequest(Connection conn, int leaveApplicationId, String decision,
                                       int hrEmployeeId) throws SQLException {
 
         String selectSql   = "SELECT EmployeeID, NumberOfDays FROM LeaveApplication "
@@ -189,10 +187,8 @@ public class HRDataAccess {
                            + "SET UsedDays=UsedDays+?, RemainingDays=RemainingDays-? "
                            + "WHERE EmployeeID=? AND RemainingDays >= ?";
 
-        try (Connection conn = DBConnection.getConnection()) {
-
-            int numberOfDays = 0, employeeId = 0;
-            try (PreparedStatement ps = conn.prepareStatement(selectSql)) {
+        int numberOfDays = 0, employeeId = 0;
+        try (PreparedStatement ps = conn.prepareStatement(selectSql)) {
                 ps.setInt(1, leaveApplicationId);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
@@ -202,7 +198,8 @@ public class HRDataAccess {
             }
 
             try (PreparedStatement ps = conn.prepareStatement(updateLeave)) {
-                ps.setString(1, decision);
+                String dbStatus = "APPROVED".equals(decision) ? "ACCEPTED" : decision;
+                ps.setString(1, dbStatus);
                 ps.setInt(2, hrEmployeeId);
                 ps.setInt(3, leaveApplicationId);
                 ps.executeUpdate();
@@ -216,7 +213,7 @@ public class HRDataAccess {
                     ps.setInt(4, numberOfDays);
                     int rows = ps.executeUpdate();
                     if (rows == 0) {
-                        // Not enough balance — rollback status
+                        // Not enough balance : rollback status
                         try (PreparedStatement rb = conn.prepareStatement(
                                 "UPDATE LeaveApplication "
                               + "SET Status='PENDING', ApprovedBy=NULL, ApprovalDate=NULL "
@@ -229,7 +226,7 @@ public class HRDataAccess {
                 }
             }
             return true;
-        }
+        
     }
 
     // ─────────────────────────────────────────────────────────────────

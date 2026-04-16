@@ -3,6 +3,7 @@ package RMI;
 import Mayan.Employee;
 import Mayan.formHrReport;
 import RMI.RMIInterfaceMain;
+import Shatha_HR.HRForm;
 import javax.swing.JOptionPane;
 
 public class Navigator {
@@ -11,12 +12,14 @@ public class Navigator {
 
         if (emp.getRole().equalsIgnoreCase("HR")) {
             // navigate to HR menu
-            new formHrReport(emp, remote).setVisible(true);
+            new HRForm(remote, emp.getEmployeeID(), emp).setVisible(true);
+            
             JOptionPane.showMessageDialog(null,
                     "Welcome HR " + emp.getFirstName());
 
         } else if (emp.getRole().equalsIgnoreCase("Employee")) {
             // navigate to Employee menu
+            //new HRForm(remote, emp.getEmployeeID(), emp).setVisible(true);
             
             JOptionPane.showMessageDialog(null,
                     "Welcome Employee " + emp.getFirstName());

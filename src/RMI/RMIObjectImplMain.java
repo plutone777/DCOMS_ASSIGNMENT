@@ -8,10 +8,13 @@ import Mayan.Employee;
 import Mayan.HR_DataAccess;
 import Mayan.HR_Report;
 import Mayan.Login;
+import Samara.LeaveModuleS;
+import Samara.LeaveRequest;
 import Shatha_HR.HRModule;
 import java.rmi.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfaceMain{
@@ -27,9 +30,14 @@ public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfa
     
     public RMIObjectImplMain()throws RemoteException{
         super();
+        leaveModuleS = new LeaveModuleS();
     }
     // shatha
+    private static final long serialVersionUID = 1L;
     HRModule hrModule = new HRModule();
+    
+    // samara
+    private LeaveModuleS leaveModuleS;
     
     //override your methods here !!!!!!!!!!!!!!
     //mayan
@@ -98,7 +106,7 @@ public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfa
     @Override
     public List<String[]> getPendingLeaveRequests() throws RemoteException {
         try {
-            // HRModule returns List<LeaveRecord> — convert to List<String[]> for RMI
+            // HRModule returns List<LeaveRecord> : convert to List<String[]> for RMI
             // String[] is Serializable by default in Java
             List<Shatha_HR.LeaveRecord> records =
                 hrModule.getPendingLeaveRequests();
@@ -129,4 +137,20 @@ public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfa
         }
     }
     
+    // samara
+    @Override
+    public int applyLeave(String employeeId, Date startDate, Date endDate, String reason) 
+            throws RemoteException {
+        return leaveModuleS.applyLeave(employeeId, startDate, endDate, reason);
+    }
+    @Override
+    public String getLeaveStatus(int requestId, String employeeId) 
+            throws RemoteException {
+        return leaveModuleS.getLeaveStatus(requestId, employeeId);
+    }
+    @Override
+    public List<LeaveRequest> getLeaveHistory(String employeeId) 
+            throws RemoteException {
+        return leaveModuleS.getLeaveHistory(employeeId);
+    }
 }

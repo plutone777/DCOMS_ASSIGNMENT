@@ -41,7 +41,7 @@ public class LeaveRecord implements Serializable {
     public String getNumberOfDays()       { return numberOfDays; }
     public String getReason()             { return reason; }
 
-    /** Converts to String[] format used by HRForm's list box */
+    //Converts to String[] format used by HRForm's list box
     public String[] toArray() {
         return new String[]{
             leaveApplicationId, employeeId, fullName, leaveType,
