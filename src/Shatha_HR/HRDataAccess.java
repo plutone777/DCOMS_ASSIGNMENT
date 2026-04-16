@@ -23,40 +23,60 @@ public class HRDataAccess {
             String address, String email, String phoneNo
     ) throws SQLException {
 
-        // Derby: INSERT with GENERATED ALWAYS AS IDENTITY column
-       
-        String sqlGetMax = "SELECT COALESCE(MAX(EmployeeID), 0) + 1 AS NextID FROM Employee";
+        // EDITED: Get next ID SQL queries for ALL 4 tables (not just Employee)
+        String sqlGetMaxEmp      = "SELECT COALESCE(MAX(EmployeeID), 0) + 1 AS NextID FROM Employee";
+        String sqlGetMaxPersonal = "SELECT COALESCE(MAX(PersonalID), 0) + 1 AS NextID FROM EmployeePersonalDetails";
+        String sqlGetMaxFamily   = "SELECT COALESCE(MAX(FamilyID), 0) + 1 AS NextID FROM EmployeeFamilyDetails";
+        String sqlGetMaxLeave    = "SELECT COALESCE(MAX(LeaveBalanceID), 0) + 1 AS NextID FROM LeaveBalance";
         
         String sql1 = "INSERT INTO Employee "
                     + "(EmployeeID, FirstName, LastName, ICOrPassportNo, Username, PasswordHash, Role) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
+        // EDITED: Added PersonalID column + one more ?
         String sql2 = "INSERT INTO EmployeePersonalDetails "
-                    + "(EmployeeID, DateOfBirth, Gender, Address, Email, PhoneNo) "
-                    + "VALUES (?, ?, ?, ?, ?, ?)";
+                    + "(PersonalID, EmployeeID, DateOfBirth, Gender, Address, Email, PhoneNo) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
+        // EDITED: Added FamilyID column + one more ?
         String sql3 = "INSERT INTO EmployeeFamilyDetails "
-                    + "(EmployeeID, SpouseName, NumberOfChildren, DependentName, "
+                    + "(FamilyID, EmployeeID, SpouseName, NumberOfChildren, DependentName, "
                     + " DependantRelationship, DependentDOB, RelationshipStatus, "
                     + " EmergencyContact, EmergencyContactRelationship) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        // Derby: YEAR(CURRENT_DATE) instead of MySQL's YEAR(NOW())
+        // EDITED: Added LeaveBalanceID column + one more ?
         String sql4 = "INSERT INTO LeaveBalance "
-                    + "(EmployeeID, CurrentYear, TotalDays, UsedDays, RemainingDays) "
-                    + "VALUES (?, YEAR(CURRENT_DATE), 20, 0, 20)";
+                    + "(LeaveBalanceID, EmployeeID, CurrentYear, TotalDays, UsedDays, RemainingDays) "
+                    + "VALUES (?, ?, YEAR(CURRENT_DATE), 20, 0, 20)";
 
-// Step 1: Get the next available EmployeeID
-        int newEmpId;
-        try (PreparedStatement psMax = conn.prepareStatement(sqlGetMax);
-             ResultSet rsMax = psMax.executeQuery()) {
-            rsMax.next();
-            newEmpId = rsMax.getInt("NextID");
+        // EDITED: Fetch next IDs for all 4 tables BEFORE inserting
+        int newEmpId, newPersonalId, newFamilyId, newLeaveBalanceId;
+        
+        try (PreparedStatement ps = conn.prepareStatement(sqlGetMaxEmp);
+             ResultSet rs = ps.executeQuery()) {
+            rs.next();
+            newEmpId = rs.getInt("NextID");
+        }
+        try (PreparedStatement ps = conn.prepareStatement(sqlGetMaxPersonal);
+             ResultSet rs = ps.executeQuery()) {
+            rs.next();
+            newPersonalId = rs.getInt("NextID");
+        }
+        try (PreparedStatement ps = conn.prepareStatement(sqlGetMaxFamily);
+             ResultSet rs = ps.executeQuery()) {
+            rs.next();
+            newFamilyId = rs.getInt("NextID");
+        }
+        try (PreparedStatement ps = conn.prepareStatement(sqlGetMaxLeave);
+             ResultSet rs = ps.executeQuery()) {
+            rs.next();
+            newLeaveBalanceId = rs.getInt("NextID");
         }
         
-        // Step 2: Insert employee with manually generated ID
+        // Step 2: Insert into all tables with manually generated IDs
         try (PreparedStatement ps1 = conn.prepareStatement(sql1)) {
-            ps1.setInt(1, newEmpId);                  
+            ps1.setInt(1, newEmpId);
             ps1.setString(2, firstName);
             ps1.setString(3, lastName);
             ps1.setString(4, icOrPassportNo);
@@ -65,34 +85,37 @@ public class HRDataAccess {
             ps1.setString(7, (role == null || role.isEmpty()) ? "EMPLOYEE" : role);
             ps1.executeUpdate();
 
-            // Insert EmployeePersonalDetails
+            // EDITED: Added setInt(1, newPersonalId) and shifted others +1
             try (PreparedStatement ps2 = conn.prepareStatement(sql2)) {
-                ps2.setInt(1, newEmpId);
-                ps2.setDate(2, parseDateOrNull(dateOfBirth));
-                ps2.setString(3, gender);
-                ps2.setString(4, address);
-                ps2.setString(5, email);
-                ps2.setString(6, phoneNo);
+                ps2.setInt(1, newPersonalId);                    // ← NEW: PersonalID
+                ps2.setInt(2, newEmpId);
+                ps2.setDate(3, parseDateOrNull(dateOfBirth));
+                ps2.setString(4, gender);
+                ps2.setString(5, address);
+                ps2.setString(6, email);
+                ps2.setString(7, phoneNo);
                 ps2.executeUpdate();
             }
 
-            // Insert EmployeeFamilyDetails
+            // EDITED: Added setInt(1, newFamilyId) and shifted others +1
             try (PreparedStatement ps3 = conn.prepareStatement(sql3)) {
-                ps3.setInt(1, newEmpId);
-                ps3.setString(2, spouseName);
-                ps3.setInt(3, numberOfChildren);
-                ps3.setString(4, dependentName);
-                ps3.setString(5, dependantRelationship);
-                ps3.setDate(6, parseDateOrNull(dependentDOB));
-                ps3.setString(7, relationshipStatus);
-                ps3.setString(8, emergencyContact);
-                ps3.setString(9, emergencyContactRelationship);
+                ps3.setInt(1, newFamilyId);                      // ← NEW: FamilyID
+                ps3.setInt(2, newEmpId);
+                ps3.setString(3, spouseName);
+                ps3.setInt(4, numberOfChildren);
+                ps3.setString(5, dependentName);
+                ps3.setString(6, dependantRelationship);
+                ps3.setDate(7, parseDateOrNull(dependentDOB));
+                ps3.setString(8, relationshipStatus);
+                ps3.setString(9, emergencyContact);
+                ps3.setString(10, emergencyContactRelationship);
                 ps3.executeUpdate();
             }
 
-            // Insert LeaveBalance : 20 days for current year
+            // EDITED: Added setInt(1, newLeaveBalanceId) and shifted employeeId
             try (PreparedStatement ps4 = conn.prepareStatement(sql4)) {
-                ps4.setInt(1, newEmpId);
+                ps4.setInt(1, newLeaveBalanceId);                // ← NEW: LeaveBalanceID
+                ps4.setInt(2, newEmpId);
                 ps4.executeUpdate();
             }
 
