@@ -6,7 +6,6 @@ package Shatha_HR;
 
 
 import RMI.RMIInterfaceMain;
-import java.rmi.Naming;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -28,21 +27,7 @@ public class HRForm extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(HRForm.class.getName());
 
-    /**
-     * Creates new form HRForm
-     */
-    public HRForm() {
-        initComponents();
-        // Make table cells non-editable
-        employeeTable.setDefaultEditor(Object.class, null);
-        connectToServer();
-        pendingList.addItemListener(e -> {
-            if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-                onListClicked();
-            }
-        });
-        loadPendingLeaves();
-    }
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -371,38 +356,13 @@ public class HRForm extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
+
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new HRForm().setVisible(true));
-    }
-private void connectToServer() {
-        try {
-            String url = "rmi://localhost:1044/HRMSService"; // matches ServerMain.rebind("HRMSService",...)
-            hrService = (RMIInterfaceMain) Naming.lookup(url);
-            System.out.println("[HR] Connected.");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                "Cannot connect!\nStart ServerMain first.\n\n" + e.getMessage(),
-                "Connection Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+    //    java.awt.EventQueue.invokeLater(() -> new HRForm().setVisible(true));
+   // }
+
 
     private void onRegisterClicked() {
         if (hrService == null) { JOptionPane.showMessageDialog(this, "Not connected!"); return; }
