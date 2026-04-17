@@ -27,7 +27,6 @@ public class HRDataAccess {
         String sqlGetMaxEmp      = "SELECT COALESCE(MAX(EmployeeID), 0) + 1 AS NextID FROM Employee";
         String sqlGetMaxPersonal = "SELECT COALESCE(MAX(PersonalID), 0) + 1 AS NextID FROM EmployeePersonalDetails";
         String sqlGetMaxFamily   = "SELECT COALESCE(MAX(FamilyID), 0) + 1 AS NextID FROM EmployeeFamilyDetails";
-        // FIX: Changed LeaveBalanceID to BalanceID (actual column name in database)
         String sqlGetMaxLeave    = "SELECT COALESCE(MAX(BalanceID), 0) + 1 AS NextID FROM LeaveBalance";
         
         String sql1 = "INSERT INTO Employee "
@@ -44,7 +43,7 @@ public class HRDataAccess {
                     + " EmergencyContact, EmergencyContactRelationship) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        // FIX: Changed LeaveBalanceID to BalanceID (actual column name in database)
+      
         String sql4 = "INSERT INTO LeaveBalance "
                     + "(BalanceID, EmployeeID, CurrentYear, TotalDays, UsedDays, RemainingDays) "
                     + "VALUES (?, ?, YEAR(CURRENT_DATE), 20, 0, 20)";
