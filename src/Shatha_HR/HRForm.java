@@ -25,7 +25,7 @@ public class HRForm extends javax.swing.JFrame {
     private List<String[]> pendingLeaves;
     private int selectedLeaveId = -1;
     private int selectedEmpId   = -1;
-    private Employee emp; // added by Mayan
+    private Employee emp;
     
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(HRForm.class.getName());
@@ -403,15 +403,11 @@ public class HRForm extends javax.swing.JFrame {
                 getVal(emailField,                   "Email"),
                 getVal(phoneNoField,                 "Phone no.")
             );
-            if (newId == -1) {
-                JOptionPane.showMessageDialog(this, "FAILED. Username or IC already exists.",
-                    "Failed", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this,
-                    "Registered! ID: " + newId + "  Name: " + firstName + " " + lastName,
-                    "Success", JOptionPane.INFORMATION_MESSAGE);
-                clearForm();
-            }
+            JOptionPane.showMessageDialog(this,
+                "Successfully added! Employee ID: " + newId + "\nName: " + firstName + " " + lastName,
+                "Success", JOptionPane.INFORMATION_MESSAGE);
+            clearForm();
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Server error:\n" + e.getMessage(),
                 "Error", JOptionPane.ERROR_MESSAGE);
@@ -538,7 +534,7 @@ public HRForm(RMIInterfaceMain remoteStub, int hrEmployeeId, Employee emp) {
     employeeTable.setDefaultEditor(Object.class, null);
     this.hrService = remoteStub;       
     this.loggedInHrId = hrEmployeeId; 
-    this.emp = emp; // added by Mayan
+    this.emp = emp;
     System.out.println("[HR] Connected via shared stub.");
     pendingList.addItemListener(e -> {
         if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {

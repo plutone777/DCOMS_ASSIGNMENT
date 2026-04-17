@@ -11,7 +11,6 @@ import java.util.concurrent.Callable;
 
 
 public class HRModule {
-
     // Thread pool: 5 threads available for concurrent HR operations
     private final ExecutorService threadPool = Executors.newFixedThreadPool(5);
 
@@ -32,7 +31,6 @@ public class HRModule {
             String address, String email, String phoneNo
     ) throws Exception {
 
-        // Get Connection from DBConnection and pass it to DAO
         Callable<Integer> task = () -> {
             try (Connection conn = DBConnection.getConnection()) {
                 return dao.registerEmployee(
@@ -47,14 +45,13 @@ public class HRModule {
         };
 
         Future<Integer> future = threadPool.submit(task);
-        return future.get(); // wait for result
+        return future.get();
     }
 
     // ─────────────────────────────────────────────────────────────────
     //  GET PENDING LEAVE REQUESTS
     // ─────────────────────────────────────────────────────────────────
-public List<LeaveRecord> getPendingLeaveRequests() throws Exception {
-        // Get Connection and pass to DAO
+    public List<LeaveRecord> getPendingLeaveRequests() throws Exception {
         Callable<List<LeaveRecord>> task = () -> {
             try (Connection conn = DBConnection.getConnection()) {
                 return dao.getPendingLeaveRequests(conn);  
@@ -68,7 +65,6 @@ public List<LeaveRecord> getPendingLeaveRequests() throws Exception {
     //  GET EMPLOYEE INFO 
     // ─────────────────────────────────────────────────────────────────
     public String[] getEmployeeInfoById(int employeeId) throws Exception {
-        //Get Connection and pass to DAO
         Callable<String[]> task = () -> {
             try (Connection conn = DBConnection.getConnection()) {
                 return dao.getEmployeeInfoById(conn, employeeId);
@@ -83,11 +79,10 @@ public List<LeaveRecord> getPendingLeaveRequests() throws Exception {
     // ─────────────────────────────────────────────────────────────────
     public boolean reviewLeaveRequest(int leaveApplicationId, String decision,
                                       int hrEmployeeId) throws Exception {
-        //Get Connection and pass to DAO
         Callable<Boolean> task = () -> {
             try (Connection conn = DBConnection.getConnection()) {
                 return dao.reviewLeaveRequest(
-                    conn,  // ← ADD conn as first parameter
+                    conn,
                     leaveApplicationId, decision, hrEmployeeId
                 );
             }
