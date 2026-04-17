@@ -2,17 +2,15 @@ package RMI;
 
 import Mayan.Employee;
 import Mayan.UserSession;
-import Mayan.formHrReport;
 import Mayan.formLogin;
-import java.net.MalformedURLException;
 import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import javax.swing.JOptionPane;
 
 public class ClientMain {
     public static void main(String[] args)
-            throws RemoteException, NotBoundException, MalformedURLException {
+            throws Exception {
+
+        System.setProperty("javax.net.ssl.trustStore", "client.truststore");
+        System.setProperty("javax.net.ssl.trustStorePassword", "123456");
 
         RMIInterfaceMain obj =
             (RMIInterfaceMain) Naming.lookup("rmi://localhost:1044/HRMSService");
@@ -23,9 +21,7 @@ public class ClientMain {
 
                 if (savedUser != null) {
                     UserSession.setCurrentUser(savedUser);
-
                     Navigator.openHome(savedUser, obj);
-
                 } else {
                     new formLogin(obj).setVisible(true);
                 }
