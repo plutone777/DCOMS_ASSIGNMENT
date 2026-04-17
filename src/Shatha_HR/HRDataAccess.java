@@ -23,35 +23,34 @@ public class HRDataAccess {
             String address, String email, String phoneNo
     ) throws SQLException {
 
-        // EDITED: Get next ID SQL queries for ALL 4 tables (not just Employee)
+        // Get next ID SQL queries for ALL 4 tables
         String sqlGetMaxEmp      = "SELECT COALESCE(MAX(EmployeeID), 0) + 1 AS NextID FROM Employee";
         String sqlGetMaxPersonal = "SELECT COALESCE(MAX(PersonalID), 0) + 1 AS NextID FROM EmployeePersonalDetails";
         String sqlGetMaxFamily   = "SELECT COALESCE(MAX(FamilyID), 0) + 1 AS NextID FROM EmployeeFamilyDetails";
-        String sqlGetMaxLeave    = "SELECT COALESCE(MAX(LeaveBalanceID), 0) + 1 AS NextID FROM LeaveBalance";
+        // FIX: Changed LeaveBalanceID to BalanceID (actual column name in database)
+        String sqlGetMaxLeave    = "SELECT COALESCE(MAX(BalanceID), 0) + 1 AS NextID FROM LeaveBalance";
         
         String sql1 = "INSERT INTO Employee "
                     + "(EmployeeID, FirstName, LastName, ICOrPassportNo, Username, PasswordHash, Role) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        // EDITED: Added PersonalID column + one more ?
         String sql2 = "INSERT INTO EmployeePersonalDetails "
                     + "(PersonalID, EmployeeID, DateOfBirth, Gender, Address, Email, PhoneNo) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        // EDITED: Added FamilyID column + one more ?
         String sql3 = "INSERT INTO EmployeeFamilyDetails "
                     + "(FamilyID, EmployeeID, SpouseName, NumberOfChildren, DependentName, "
                     + " DependantRelationship, DependentDOB, RelationshipStatus, "
                     + " EmergencyContact, EmergencyContactRelationship) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        // EDITED: Added LeaveBalanceID column + one more ?
+        // FIX: Changed LeaveBalanceID to BalanceID (actual column name in database)
         String sql4 = "INSERT INTO LeaveBalance "
-                    + "(LeaveBalanceID, EmployeeID, CurrentYear, TotalDays, UsedDays, RemainingDays) "
+                    + "(BalanceID, EmployeeID, CurrentYear, TotalDays, UsedDays, RemainingDays) "
                     + "VALUES (?, ?, YEAR(CURRENT_DATE), 20, 0, 20)";
 
-        // EDITED: Fetch next IDs for all 4 tables BEFORE inserting
-        int newEmpId, newPersonalId, newFamilyId, newLeaveBalanceId;
+        // Fetch next IDs for all 4 tables BEFORE inserting
+        int newEmpId, newPersonalId, newFamilyId, newBalanceId;
         
         try (PreparedStatement ps = conn.prepareStatement(sqlGetMaxEmp);
              ResultSet rs = ps.executeQuery()) {
@@ -71,10 +70,10 @@ public class HRDataAccess {
         try (PreparedStatement ps = conn.prepareStatement(sqlGetMaxLeave);
              ResultSet rs = ps.executeQuery()) {
             rs.next();
-            newLeaveBalanceId = rs.getInt("NextID");
+            newBalanceId = rs.getInt("NextID");
         }
         
-        // Step 2: Insert into all tables with manually generated IDs
+        // Insert into all tables with manually generated IDs
         try (PreparedStatement ps1 = conn.prepareStatement(sql1)) {
             ps1.setInt(1, newEmpId);
             ps1.setString(2, firstName);
@@ -85,9 +84,8 @@ public class HRDataAccess {
             ps1.setString(7, (role == null || role.isEmpty()) ? "EMPLOYEE" : role);
             ps1.executeUpdate();
 
-            // EDITED: Added setInt(1, newPersonalId) and shifted others +1
             try (PreparedStatement ps2 = conn.prepareStatement(sql2)) {
-                ps2.setInt(1, newPersonalId);                    // ← NEW: PersonalID
+                ps2.setInt(1, newPersonalId);
                 ps2.setInt(2, newEmpId);
                 ps2.setDate(3, parseDateOrNull(dateOfBirth));
                 ps2.setString(4, gender);
@@ -97,9 +95,8 @@ public class HRDataAccess {
                 ps2.executeUpdate();
             }
 
-            // EDITED: Added setInt(1, newFamilyId) and shifted others +1
             try (PreparedStatement ps3 = conn.prepareStatement(sql3)) {
-                ps3.setInt(1, newFamilyId);                      // ← NEW: FamilyID
+                ps3.setInt(1, newFamilyId);
                 ps3.setInt(2, newEmpId);
                 ps3.setString(3, spouseName);
                 ps3.setInt(4, numberOfChildren);
@@ -112,9 +109,8 @@ public class HRDataAccess {
                 ps3.executeUpdate();
             }
 
-            // EDITED: Added setInt(1, newLeaveBalanceId) and shifted employeeId
             try (PreparedStatement ps4 = conn.prepareStatement(sql4)) {
-                ps4.setInt(1, newLeaveBalanceId);                // ← NEW: LeaveBalanceID
+                ps4.setInt(1, newBalanceId);
                 ps4.setInt(2, newEmpId);
                 ps4.executeUpdate();
             }
@@ -134,8 +130,6 @@ public class HRDataAccess {
     public List<LeaveRecord> getPendingLeaveRequests(Connection conn) throws SQLException {
         List<LeaveRecord> results = new ArrayList<>();
 
-        // UPPER() makes the comparison case-insensitive:
-        // "pending", "PENDING", "Pending" all match
         String sql = "SELECT la.LeaveApplicationID, la.EmployeeID, "
                    + "       e.FirstName, e.LastName, "
                    + "       la.StartDate, la.EndDate, "
@@ -174,7 +168,7 @@ public class HRDataAccess {
                    + "JOIN LeaveBalance lb ON e.EmployeeID = lb.EmployeeID "
                    + "WHERE e.EmployeeID = ?";
 
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {   
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {   
             ps.setInt(1, employeeId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -209,51 +203,48 @@ public class HRDataAccess {
         String updateLeave = "UPDATE LeaveApplication "
                            + "SET Status=?, ApprovedBy=?, ApprovalDate=CURRENT_TIMESTAMP "
                            + "WHERE LeaveApplicationID=?";
-        // Derby: CURRENT_TIMESTAMP instead of MySQL's NOW()
         String updateBal   = "UPDATE LeaveBalance "
                            + "SET UsedDays=UsedDays+?, RemainingDays=RemainingDays-? "
                            + "WHERE EmployeeID=? AND RemainingDays >= ?";
 
         int numberOfDays = 0, employeeId = 0;
         try (PreparedStatement ps = conn.prepareStatement(selectSql)) {
-                ps.setInt(1, leaveApplicationId);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    employeeId   = rs.getInt("EmployeeID");
-                    numberOfDays = rs.getInt("NumberOfDays");
-                } else return false;
-            }
+            ps.setInt(1, leaveApplicationId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                employeeId   = rs.getInt("EmployeeID");
+                numberOfDays = rs.getInt("NumberOfDays");
+            } else return false;
+        }
 
-            try (PreparedStatement ps = conn.prepareStatement(updateLeave)) {
-                String dbStatus = "APPROVED".equals(decision) ? "ACCEPTED" : decision;
-                ps.setString(1, dbStatus);
-                ps.setInt(2, hrEmployeeId);
-                ps.setInt(3, leaveApplicationId);
-                ps.executeUpdate();
-            }
+        try (PreparedStatement ps = conn.prepareStatement(updateLeave)) {
+            String dbStatus = "APPROVED".equals(decision) ? "ACCEPTED" : decision;
+            ps.setString(1, dbStatus);
+            ps.setInt(2, hrEmployeeId);
+            ps.setInt(3, leaveApplicationId);
+            ps.executeUpdate();
+        }
 
-            if ("APPROVED".equals(decision)) {
-                try (PreparedStatement ps = conn.prepareStatement(updateBal)) {
-                    ps.setInt(1, numberOfDays);
-                    ps.setInt(2, numberOfDays);
-                    ps.setInt(3, employeeId);
-                    ps.setInt(4, numberOfDays);
-                    int rows = ps.executeUpdate();
-                    if (rows == 0) {
-                        // Not enough balance : rollback status
-                        try (PreparedStatement rb = conn.prepareStatement(
-                                "UPDATE LeaveApplication "
-                              + "SET Status='PENDING', ApprovedBy=NULL, ApprovalDate=NULL "
-                              + "WHERE LeaveApplicationID=?")) {
-                            rb.setInt(1, leaveApplicationId);
-                            rb.executeUpdate();
-                        }
-                        return false;
+        if ("APPROVED".equals(decision)) {
+            try (PreparedStatement ps = conn.prepareStatement(updateBal)) {
+                ps.setInt(1, numberOfDays);
+                ps.setInt(2, numberOfDays);
+                ps.setInt(3, employeeId);
+                ps.setInt(4, numberOfDays);
+                int rows = ps.executeUpdate();
+                if (rows == 0) {
+                    try (PreparedStatement rb = conn.prepareStatement(
+                            "UPDATE LeaveApplication "
+                          + "SET Status='PENDING', ApprovedBy=NULL, ApprovalDate=NULL "
+                          + "WHERE LeaveApplicationID=?")) {
+                        rb.setInt(1, leaveApplicationId);
+                        rb.executeUpdate();
                     }
+                    return false;
                 }
             }
-            return true;
-        
+        }
+        return true;
     }
 
     // ─────────────────────────────────────────────────────────────────
