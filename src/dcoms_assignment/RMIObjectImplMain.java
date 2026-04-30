@@ -8,6 +8,4 @@ public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfa
     public RMIObjectImplMain()throws RemoteException{
         super();
     }
-    //override your methods here
-
 }
