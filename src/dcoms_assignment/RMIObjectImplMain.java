@@ -8,15 +8,17 @@ import java.util.Date;
 import java.util.List;
 
 public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfaceMain{
+    
     //create objects of your classes here
     private LeaveModule leaveModule;
+    
     
     public RMIObjectImplMain()throws RemoteException{
         super();
         leaveModule = new LeaveModule();
     }
     
-     // ========== ВАША РЕАЛИЗАЦИЯ ==========
+    //samara
     @Override
     public int applyLeave(String employeeId, Date startDate, Date endDate, String reason) 
             throws RemoteException {
@@ -34,6 +36,5 @@ public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfa
             throws RemoteException {
         return leaveModule.getLeaveHistory(employeeId);
     }
-    //override your methods here
 
 }

@@ -32,7 +32,7 @@ public class LeaveModule {
         int numberOfDays = (int) (diff / (1000 * 60 * 60 * 24)) + 1;
         
         try (Connection conn = getConnection()) {
-            // Проверка остатка дней
+
             String checkBalanceSql = "SELECT RemainingDays FROM LeaveBalance " +
                                      "WHERE EmployeeID = ? AND CurrentYear = 2026";
             PreparedStatement checkStmt = conn.prepareStatement(checkBalanceSql);
@@ -49,7 +49,7 @@ public class LeaveModule {
                     "Available: " + remainingDays + ", Requested: " + numberOfDays);
             }
             
-            // Генерация нового ID
+
             String getIdSql = "SELECT MAX(LeaveApplicationID) + 1 AS newId FROM LeaveApplication";
             Statement stmt = conn.createStatement();
             ResultSet idRs = stmt.executeQuery(getIdSql);
@@ -58,7 +58,7 @@ public class LeaveModule {
                 newId = idRs.getInt("newId");
             }
             
-            // Вставка заявки
+
             String insertSql = "INSERT INTO LeaveApplication (LeaveApplicationID, EmployeeID, " +
                                "StartDate, EndDate, NumberOfDays, Reason, ApplyDate, Status) " +
                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";

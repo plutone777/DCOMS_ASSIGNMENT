@@ -9,7 +9,7 @@ public class ServerMain {
     public static void main(String[] args)throws RemoteException {
         Registry reg = LocateRegistry.createRegistry(1099);
         reg.rebind("HRMSystem", new RMIObjectImplMain());
-        System.out.println("RMI Server running on port 1099");
+        System.out.println("RMI Server running on port 1044");
         System.out.println("Service bound as: HRMSystem");
     }
 }

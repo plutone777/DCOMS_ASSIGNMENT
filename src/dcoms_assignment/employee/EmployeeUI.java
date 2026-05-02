@@ -23,28 +23,18 @@ public class EmployeeUI extends javax.swing.JFrame {
         initComponents();
     }
 
-    public EmployeeUI(String employeeId) {
+    public EmployeeUI(String employeeId, RMIInterfaceMain remote) {
         this.loggedInEmployeeId = employeeId;
+        this.service = remote;
         initComponents();
         
-        // Подключение к RMI серверу
-        try {
-            service = (RMIInterfaceMain) Naming.lookup("rmi://localhost:1099/HRMSystem");
-            System.out.println("Connected to RMI Server");
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to connect: " + e.getMessage());
-            System.exit(1);
-        }
         
-        // Приветствие
         lblWelcome.setText("Welcome, " + employeeId);
         
-        // Добавляем обработчики кнопок
         jButton1.addActionListener(e -> updateDetails());
         jButton2.addActionListener(e -> checkBalance());
         btnApplyLeave.addActionListener(e -> applyLeave());
-        btnViewStatus.addActionListener(e -> viewStatus());
+        btnViewStatus.addActionListener(e -> viewStatus()); 
         btnViewHistory.addActionListener(e -> viewHistory());
         jButton6.addActionListener(e -> logout());
     }
@@ -198,14 +188,13 @@ public class EmployeeUI extends javax.swing.JFrame {
             StringBuilder sb = new StringBuilder("Leave History:\n\n");
             for (LeaveRequest req : history) {
                 sb.append("ID: ").append(req.getRequestId())
-                  .append(" | Status: ").append(req.getStatus())
-                  .append(" | From: ").append(dateFormat.format(req.getStartDate()))
-                  .append(" To: ").append(dateFormat.format(req.getEndDate()))
+                  .append("Status: ").append(req.getStatus())
+                  .append("From: ").append(dateFormat.format(req.getStartDate()))
+                  .append("To: ").append(dateFormat.format(req.getEndDate()))
                   .append("\n");
                 if (req.getReason() != null && !req.getReason().isEmpty()) {
-                    sb.append("   Reason: ").append(req.getReason()).append("\n");
+                    sb.append("Reason: ").append(req.getReason()).append("\n");
                 }
-                sb.append("-----------------------------------\n");
             }
             
             javax.swing.JTextArea textArea = new javax.swing.JTextArea(sb.toString());
@@ -224,13 +213,13 @@ public class EmployeeUI extends javax.swing.JFrame {
     
     private void updateDetails() {
         JOptionPane.showMessageDialog(this, 
-            "Update Personal & Family Details\n(Will be implemented by Bisma)",
+            "Update Personal & Family Details",
             "Info", JOptionPane.INFORMATION_MESSAGE);
     }
     
     private void checkBalance() {
         JOptionPane.showMessageDialog(this, 
-            "Check Leave Balance\n(Will be implemented by Bisma)",
+            "Check Leave Balance",
             "Info", JOptionPane.INFORMATION_MESSAGE);
     }
     
@@ -245,14 +234,6 @@ public class EmployeeUI extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-       
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new EmployeeUI("1").setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnApplyLeave;
