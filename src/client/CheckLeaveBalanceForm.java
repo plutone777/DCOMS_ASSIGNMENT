@@ -2,8 +2,7 @@ package client;
 
 import DB.LeaveBalanceData;
 import javax.swing.table.DefaultTableModel;
-
-
+import rmi.RMIInterfaceMain;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -14,13 +13,13 @@ import javax.swing.table.DefaultTableModel;
  * @author bisma
  */
 public class CheckLeaveBalanceForm extends javax.swing.JFrame {
-
+    private RMIInterfaceMain stub;
     /**
      * Creates new form CheckLeaveBalanceForm
      */
-    public CheckLeaveBalanceForm() {
-        initComponents();
-     
+    public CheckLeaveBalanceForm(RMIInterfaceMain stub) {
+    this.stub = stub;
+    initComponents();
     }
 
     /**
@@ -94,8 +93,6 @@ public class CheckLeaveBalanceForm extends javax.swing.JFrame {
 
         new Thread(() -> {
         try {
-            rmi.RMIInterfaceMain stub = (rmi.RMIInterfaceMain) java.rmi.Naming.lookup("rmi://localhost/RMIInterfaceMain");
-
             LeaveBalanceData data = stub.checkLeaveBalance(101, 2026);
 
             javax.swing.SwingUtilities.invokeLater(() -> {
@@ -153,7 +150,6 @@ public class CheckLeaveBalanceForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CheckLeaveBalanceForm().setVisible(true);
             }
         });
     }

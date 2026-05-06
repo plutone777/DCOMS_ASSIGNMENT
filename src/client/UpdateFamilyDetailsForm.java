@@ -1,7 +1,7 @@
 package client;
 
 import DB.FamilyDetailsModule;
-
+import rmi.RMIInterfaceMain;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -12,12 +12,13 @@ import DB.FamilyDetailsModule;
  * @author bisma
  */
 public class UpdateFamilyDetailsForm extends javax.swing.JFrame {
-
+    private RMIInterfaceMain stub;
     /**
      * Creates new form UpdateFamilyDetailsForm
      */
-    public UpdateFamilyDetailsForm() {
-        initComponents();
+    public UpdateFamilyDetailsForm(RMIInterfaceMain stub) {
+    this.stub = stub;
+    initComponents();
     }
 
     /**
@@ -140,9 +141,6 @@ public class UpdateFamilyDetailsForm extends javax.swing.JFrame {
     @Override
     public void run() {
         try {
-            // Lookup the remote object from the registry
-             rmi.RMIInterfaceMain stub = (rmi.RMIInterfaceMain) java.rmi.Naming.lookup("rmi://localhost/RMIInterfaceMain");
-
             // Call the remote method
             boolean success = stub.updateFamilyDetails(
                 101, // Example EmployeeID
@@ -198,8 +196,8 @@ public class UpdateFamilyDetailsForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new UpdateFamilyDetailsForm().setVisible(true);
-            }
+          // new UpdateFamilyDetailsForm().setVisible(true);
+        }
         });
     }
 

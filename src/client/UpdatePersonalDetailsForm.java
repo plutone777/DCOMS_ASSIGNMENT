@@ -1,7 +1,7 @@
 package client;
 
 import DB.PersonalDetailsModule;
-
+import rmi.RMIInterfaceMain;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -13,11 +13,13 @@ import DB.PersonalDetailsModule;
  */
 public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
 
+    private RMIInterfaceMain stub;     
     /**
      * Creates new form UpdatePersonalDetailsForm
      */
-    public UpdatePersonalDetailsForm() {
-        initComponents();
+    public UpdatePersonalDetailsForm(RMIInterfaceMain stub) {
+    this.stub = stub;
+    initComponents();
     }
 
     /**
@@ -175,8 +177,6 @@ public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
         @Override
         public void run() {
             try {
-                // Lookup the remote object from the registry
-                rmi.RMIInterfaceMain stub = (rmi.RMIInterfaceMain) java.rmi.Naming.lookup("rmi://localhost/RMIInterfaceMain");
 
                 // Call the remote method
                 boolean success = stub.updatePersonalDetails(
@@ -233,8 +233,8 @@ public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new UpdatePersonalDetailsForm().setVisible(true);
-            }
+            // new UpdatePersonalDetailsForm().setVisible(true);
+        }
         });
     }
 
