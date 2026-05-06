@@ -1,12 +1,12 @@
 package RMI;
 
-import Bisma_DB.LeaveBalanceData;
 import Mayan.Employee;
 import Samara.LeaveRequest;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.List;
+import Bisma_DB.LeaveBalanceData;
 
 public interface RMIInterfaceMain extends Remote{
     //declare all your methods here! Not implementation, just ur method name.
@@ -20,8 +20,13 @@ public interface RMIInterfaceMain extends Remote{
     String exportLeaveReport(int employeeID, int year) throws RemoteException;  
     
     // bisma's methods
+    // Personal details
     boolean updatePersonalDetails(int employeeId, String address, String email, String phone) throws RemoteException;
+    
+    // Family details
     boolean updateFamilyDetails(int employeeId, String spouseName, int children, int emergencyContact) throws RemoteException;
+    
+    // Leave balance - now returns actual data instead of just boolean
     LeaveBalanceData checkLeaveBalance(int employeeId, int leaveYear) throws RemoteException;
     
     // shatha's methods
@@ -41,10 +46,7 @@ public interface RMIInterfaceMain extends Remote{
                                int hrEmployeeId) throws RemoteException;
     
     // samara's methods
-    public int applyLeave(String loggedInEmployeeId, Date startDate, Date endDate, String text)
-            throws RemoteException;
-    public String getLeaveStatus(int requestId, String loggedInEmployeeId)
-            throws RemoteException;
-    public List<LeaveRequest> getLeaveHistory(String loggedInEmployeeId)
-            throws RemoteException;
+    int applyLeave(String employeeId, Date startDate, Date endDate, String reason) throws RemoteException;
+    String getLeaveStatus(int requestId, String employeeId) throws RemoteException;
+    List<LeaveRequest> getLeaveHistory(String employeeId) throws RemoteException;
 }

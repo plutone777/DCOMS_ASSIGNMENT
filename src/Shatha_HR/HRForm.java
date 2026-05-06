@@ -308,6 +308,7 @@ public class HRForm extends javax.swing.JFrame {
         "Are you sure you want to log out?",
         "Log Out", JOptionPane.YES_NO_OPTION);
     if (confirm == JOptionPane.YES_OPTION) {
+        Mayan.UserSession.clearSession();
         this.dispose();
     }
     }//GEN-LAST:event_LogOutBtnActionPerformed

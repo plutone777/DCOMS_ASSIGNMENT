@@ -8,7 +8,7 @@ import Mayan.Employee;
 import Mayan.HR_DataAccess;
 import Mayan.HR_Report;
 import Mayan.Login;
-import Samara.LeaveModuleS;
+import Samara.LeaveModule;
 import Samara.LeaveRequest;
 import Shatha_HR.HRModule;
 import java.rmi.*;
@@ -17,7 +17,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
 public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfaceMain{
+
+    
     //create objects of your classes here !!!!!!!!!!!!!!!!
     // mayan
     HR_DataAccess dao = new HR_DataAccess();  
@@ -26,18 +29,19 @@ public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfa
     // bisma
     private PersonalDetailsModule personalModule = new PersonalDetailsModule();
     private FamilyDetailsModule familyModule = new FamilyDetailsModule();
-    private LeaveBalanceModule leaveModule = new LeaveBalanceModule();
+    private LeaveBalanceModule leaveModuleBisma = new LeaveBalanceModule();
     
-    public RMIObjectImplMain()throws RemoteException{
-        super();
-        leaveModuleS = new LeaveModuleS();
-    }
     // shatha
     private static final long serialVersionUID = 1L;
     HRModule hrModule = new HRModule();
     
     // samara
-    private LeaveModuleS leaveModuleS;
+    private LeaveModule leaveModuleSamara;
+    
+    public RMIObjectImplMain() throws RemoteException {
+        super();
+        leaveModuleSamara = new LeaveModule();
+    }
     
     //override your methods here !!!!!!!!!!!!!!
     //mayan
@@ -70,13 +74,15 @@ public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfa
     public boolean updatePersonalDetails(int employeeId, String address, String email, String phone) throws RemoteException {
         return personalModule.updatePersonalDetails(employeeId, address, email, phone);
     }
+    
     @Override
     public boolean updateFamilyDetails(int employeeId, String spouseName, int children, int emergencyContact) throws RemoteException {
         return familyModule.updateFamilyDetails(employeeId, spouseName, children, emergencyContact);
     }
+    
     @Override
     public LeaveBalanceData checkLeaveBalance(int employeeId, int leaveYear) throws RemoteException {
-        return leaveModule.getLeaveBalance(employeeId, leaveYear);
+        return leaveModuleBisma.getLeaveBalance(employeeId, leaveYear);
     }
     
     // shatha
@@ -141,16 +147,19 @@ public class RMIObjectImplMain extends UnicastRemoteObject implements RMIInterfa
     @Override
     public int applyLeave(String employeeId, Date startDate, Date endDate, String reason) 
             throws RemoteException {
-        return leaveModuleS.applyLeave(employeeId, startDate, endDate, reason);
+        return leaveModuleSamara.applyLeave(employeeId, startDate, endDate, reason);
     }
+    
     @Override
     public String getLeaveStatus(int requestId, String employeeId) 
             throws RemoteException {
-        return leaveModuleS.getLeaveStatus(requestId, employeeId);
+        return leaveModuleSamara.getLeaveStatus(requestId, employeeId);
     }
+    
     @Override
     public List<LeaveRequest> getLeaveHistory(String employeeId) 
             throws RemoteException {
-        return leaveModuleS.getLeaveHistory(employeeId);
+        return leaveModuleSamara.getLeaveHistory(employeeId);
     }
+    
 }

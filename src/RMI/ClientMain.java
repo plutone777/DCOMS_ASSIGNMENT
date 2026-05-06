@@ -3,17 +3,26 @@ package RMI;
 import Mayan.Employee;
 import Mayan.UserSession;
 import Mayan.formLogin;
-import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import javax.rmi.ssl.SslRMIClientSocketFactory;
 
 public class ClientMain {
-    public static void main(String[] args)
-            throws Exception {
+
+    public static void main(String[] args) throws Exception {
 
         System.setProperty("javax.net.ssl.trustStore", "client.truststore");
-        System.setProperty("javax.net.ssl.trustStorePassword", "123456");
+        System.setProperty("javax.net.ssl.trustStorePassword", "password123");
+
+        // CONNECT USING SSL SOCKET FACTORY (NOT Naming.lookup)
+        Registry registry = LocateRegistry.getRegistry(
+                "localhost",
+                1044,
+                new SslRMIClientSocketFactory()
+        );
 
         RMIInterfaceMain obj =
-            (RMIInterfaceMain) Naming.lookup("rmi://localhost:1044/HRMSService");
+                (RMIInterfaceMain) registry.lookup("HRMSService");
 
         java.awt.EventQueue.invokeLater(() -> {
             try {

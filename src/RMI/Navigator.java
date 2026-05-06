@@ -20,7 +20,7 @@ public class Navigator {
 
         } else if (emp.getRole().equalsIgnoreCase("Employee")) {
             // navigate to Employee menu
-            //new EmployeeUI(remote, emp.getEmployeeID()).setVisible(true);
+            new EmployeeUI(String.valueOf(emp.getEmployeeID()), remote).setVisible(true);
             
             JOptionPane.showMessageDialog(null,
                     "Welcome Employee " + emp.getFirstName());

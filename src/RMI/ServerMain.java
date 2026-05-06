@@ -10,7 +10,7 @@ public class ServerMain {
     public static void main(String[] args) throws Exception {
 
         System.setProperty("javax.net.ssl.keyStore", "server.keystore");
-        System.setProperty("javax.net.ssl.keyStorePassword", "123456");
+        System.setProperty("javax.net.ssl.keyStorePassword", "password123");
 
         Registry reg = LocateRegistry.createRegistry(
                 1044,
