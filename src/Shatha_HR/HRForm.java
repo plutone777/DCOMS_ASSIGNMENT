@@ -26,6 +26,7 @@ public class HRForm extends javax.swing.JFrame {
     private int selectedLeaveId = -1;
     private int selectedEmpId   = -1;
     private Employee emp;
+    private javax.swing.Timer refreshTimer;
     
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(HRForm.class.getName());
@@ -543,8 +544,28 @@ public HRForm(RMIInterfaceMain remoteStub, int hrEmployeeId, Employee emp) {
         }
     });
     loadPendingLeaves();
+     startAutoRefresh();
+}
+
+private void startAutoRefresh() {
+
+    refreshTimer = new javax.swing.Timer(5000, e -> {
+        loadPendingLeaves();
+    });
+
+    refreshTimer.start();
 }
     
+
+@Override
+public void dispose() {
+
+    if (refreshTimer != null) {
+        refreshTimer.stop();
+    }
+
+    super.dispose();
+}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton LogOutBtn;
     private javax.swing.JButton ReportGenerationBtn;

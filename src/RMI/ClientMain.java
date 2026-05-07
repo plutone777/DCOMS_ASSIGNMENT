@@ -15,11 +15,11 @@ public class ClientMain {
         System.setProperty("javax.net.ssl.trustStorePassword", "password123");
 
         // SERVER IP ADDRESS
-        String serverIP = "CHANGE THIS";
+        String serverIP = "10.186.65.49";
 
         Registry registry = LocateRegistry.getRegistry(
                 serverIP,
-                1044,
+                1099,
                 new SslRMIClientSocketFactory()
         );
 
