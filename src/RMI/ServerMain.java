@@ -13,10 +13,10 @@ public class ServerMain {
         System.setProperty("javax.net.ssl.keyStorePassword", "password123");
 
         // SERVER MACHINE IP
-        System.setProperty("java.rmi.server.hostname", "CHANGE THIS");
+        System.setProperty("java.rmi.server.hostname", "10.186.65.49");
 
         Registry reg = LocateRegistry.createRegistry(
-                1044,
+                1099,
                 new SslRMIClientSocketFactory(),
                 new SslRMIServerSocketFactory()
         );

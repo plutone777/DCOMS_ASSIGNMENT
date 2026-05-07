@@ -1,6 +1,5 @@
 package Bisma_Client;
 
-import Bisma_DB.PersonalDetailsModule;
 import RMI.RMIInterfaceMain;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -13,13 +12,15 @@ import RMI.RMIInterfaceMain;
  */
 public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
 
-    private RMIInterfaceMain stub;     
+    private RMIInterfaceMain service;
+    private String loggedInEmployeeId;    
     /**
      * Creates new form UpdatePersonalDetailsForm
      */
-    public UpdatePersonalDetailsForm(RMIInterfaceMain stub) {
-    this.stub = stub;
-    initComponents();
+    public UpdatePersonalDetailsForm(RMIInterfaceMain service, String employeeId) {
+        this.service = service;
+        this.loggedInEmployeeId = employeeId;
+        initComponents();
     }
 
     /**
@@ -179,8 +180,8 @@ public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
             try {
 
                 // Call the remote method
-                boolean success = stub.updatePersonalDetails(
-                    101, // Example EmployeeID
+                boolean success = service.updatePersonalDetails(
+                    Integer.parseInt(loggedInEmployeeId),
                     txtAddress.getText(),
                     txtEmail.getText(),
                     txtPhone.getText()
@@ -228,6 +229,8 @@ public class UpdatePersonalDetailsForm extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(UpdatePersonalDetailsForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 

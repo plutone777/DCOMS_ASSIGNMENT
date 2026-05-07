@@ -60,7 +60,7 @@ public class HR_DataAccess {
   
     public List<Employee> getAllEmployees() {
         List<Employee> list = new ArrayList<>();
-        String sql = "SELECT * FROM Employee WHERE Role = 'Employee'";
+        String sql = "SELECT * FROM Employee WHERE Role = 'Employee' OR Role = 'EMPLOYEE'";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
