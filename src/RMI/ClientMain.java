@@ -14,9 +14,11 @@ public class ClientMain {
         System.setProperty("javax.net.ssl.trustStore", "client.truststore");
         System.setProperty("javax.net.ssl.trustStorePassword", "password123");
 
-        // CONNECT USING SSL SOCKET FACTORY (NOT Naming.lookup)
+        // SERVER IP ADDRESS
+        String serverIP = "CHANGE THIS";
+
         Registry registry = LocateRegistry.getRegistry(
-                "localhost",
+                serverIP,
                 1044,
                 new SslRMIClientSocketFactory()
         );
