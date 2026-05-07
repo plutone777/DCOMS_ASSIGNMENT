@@ -13,13 +13,15 @@ import RMI.RMIInterfaceMain;
  * @author bisma
  */
 public class CheckLeaveBalanceForm extends javax.swing.JFrame {
-    private RMIInterfaceMain stub;
+    private RMIInterfaceMain service;
+    private String loggedInEmployeeId;
     /**
      * Creates new form CheckLeaveBalanceForm
      */
-    public CheckLeaveBalanceForm(RMIInterfaceMain stub) {
-    this.stub = stub;
-    initComponents();
+    public CheckLeaveBalanceForm(RMIInterfaceMain service, String employeeId) {
+        this.service = service;
+        this.loggedInEmployeeId = employeeId;
+        initComponents();
     }
 
     /**
@@ -93,7 +95,10 @@ public class CheckLeaveBalanceForm extends javax.swing.JFrame {
 
         new Thread(() -> {
         try {
-            LeaveBalanceData data = stub.checkLeaveBalance(101, 2026);
+            LeaveBalanceData data = service.checkLeaveBalance(
+                Integer.parseInt(loggedInEmployeeId),
+                2026
+            );
 
             javax.swing.SwingUtilities.invokeLater(() -> {
                 DefaultTableModel model = (DefaultTableModel) jTable1.getModel();

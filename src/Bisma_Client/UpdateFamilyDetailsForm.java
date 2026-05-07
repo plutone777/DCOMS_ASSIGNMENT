@@ -1,6 +1,5 @@
 package Bisma_Client;
 
-import Bisma_DB.FamilyDetailsModule;
 import RMI.RMIInterfaceMain;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -12,13 +11,16 @@ import RMI.RMIInterfaceMain;
  * @author bisma
  */
 public class UpdateFamilyDetailsForm extends javax.swing.JFrame {
-    private RMIInterfaceMain stub;
+    private RMIInterfaceMain service;
+    private String loggedInEmployeeId;
+
     /**
      * Creates new form UpdateFamilyDetailsForm
      */
-    public UpdateFamilyDetailsForm(RMIInterfaceMain stub) {
-    this.stub = stub;
-    initComponents();
+    public UpdateFamilyDetailsForm(RMIInterfaceMain service, String employeeId) {
+        this.service = service;
+        this.loggedInEmployeeId = employeeId;
+        initComponents();
     }
 
     /**
@@ -142,8 +144,8 @@ public class UpdateFamilyDetailsForm extends javax.swing.JFrame {
     public void run() {
         try {
             // Call the remote method
-            boolean success = stub.updateFamilyDetails(
-                101, // Example EmployeeID
+            boolean success = service.updateFamilyDetails(
+                Integer.parseInt(loggedInEmployeeId),
                 txtSpouseName.getText(),
                 Integer.parseInt(txtChildren.getText()),
                 Integer.parseInt(txtEmergencyContact.getText())
