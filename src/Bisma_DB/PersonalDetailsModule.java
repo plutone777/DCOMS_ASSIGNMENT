@@ -11,7 +11,7 @@ import java.sql.PreparedStatement;
 public class PersonalDetailsModule {
    public boolean updatePersonalDetails(int employeeId, String address, String email, String phone) {
     try (Connection conn = DBConnection.getConnection()) {
-        String sql = "UPDATE APPUSER.EmployeePersonalDetails SET Address=?, Email=?, PhoneNo=? WHERE EmployeeID=?";
+        String sql = "UPDATE EmployeePersonalDetails SET Address=?, Email=?, PhoneNo=? WHERE EmployeeID=?";
         PreparedStatement pst = conn.prepareStatement(sql);
         pst.setString(1, address);
         pst.setString(2, email);

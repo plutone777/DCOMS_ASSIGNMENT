@@ -14,7 +14,7 @@ public class LeaveBalanceModule {
     public LeaveBalanceData getLeaveBalance(int employeeId, int leaveYear) {
         try (Connection conn = DBConnection.getConnection()) {
             String sql = "SELECT TotalDays, UsedDays, RemainingDays " +
-             "FROM APPUSER.LeaveBalance " +
+             "FROM LeaveBalance " +
              "WHERE EmployeeID=? AND CurrentYear=?";
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setInt(1, employeeId);

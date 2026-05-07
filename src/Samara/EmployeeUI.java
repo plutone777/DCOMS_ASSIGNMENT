@@ -4,6 +4,7 @@ package Samara;
 import Bisma_Client.CheckLeaveBalanceForm;
 import Bisma_Client.UpdateFamilyDetailsForm;
 import Bisma_Client.UpdatePersonalDetailsForm;
+import Mayan.Employee;
 import RMI.RMIInterfaceMain;
 import Samara.LeaveRequest;
 import javax.swing.JOptionPane;
@@ -21,18 +22,20 @@ public class EmployeeUI extends javax.swing.JFrame {
     private RMIInterfaceMain service;
     private String loggedInEmployeeId;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private Employee emp;
 
     public EmployeeUI() {
         initComponents();
     }
 
-    public EmployeeUI(String employeeId, RMIInterfaceMain remote) {
+    public EmployeeUI(String employeeId, RMIInterfaceMain remote, Employee emp) {
         this.loggedInEmployeeId = employeeId;
         this.service = remote;
+        this.emp = emp;
         initComponents();
         
         
-        lblWelcome.setText("Welcome, " + employeeId);
+        lblWelcome.setText("Welcome, " + emp.getUsername());
         
         jButton1.addActionListener(e -> updateDetails());
         jButton2.addActionListener(e -> checkBalance());
@@ -114,22 +117,22 @@ public class EmployeeUI extends javax.swing.JFrame {
                             .addComponent(jButton6)
                             .addComponent(lblWelcome)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(115, 115, 115)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnApplyLeave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnViewStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnViewHistory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(131, Short.MAX_VALUE))
+                        .addGap(119, 119, 119)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnViewHistory, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnApplyLeave, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnViewStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(126, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addComponent(lblWelcome)
-                .addGap(47, 47, 47)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addGap(18, 18, 18)
                 .addComponent(jButton3)
@@ -141,7 +144,7 @@ public class EmployeeUI extends javax.swing.JFrame {
                 .addComponent(btnViewStatus)
                 .addGap(18, 18, 18)
                 .addComponent(btnViewHistory)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                .addGap(42, 42, 42)
                 .addComponent(jButton6)
                 .addGap(27, 27, 27))
         );
